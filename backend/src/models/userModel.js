@@ -24,5 +24,6 @@ const userSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-const User = mongoose.model('User', userSchema);
+// prevent OverwriteModelError
+const User = mongoose.models.User || mongoose.model('User', userSchema);
 export { User };
