@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import { StatusCodes } from 'http-status-codes';
 import { ExpressError } from './utils/ExpressError.js';
+import { mainRouter } from './routes/mainRouter.js';
 
 const app = express();
 
@@ -10,6 +11,9 @@ app.use(cors());
 
 // middleware to parse JSON request bodies
 app.use(express.json({ limit: '100kb' }));
+
+// routes
+app.use('/api/v1', mainRouter);
 
 // route not found handler
 app.use((req, res, next) => {
@@ -23,7 +27,7 @@ app.use((err, req, res, next) => {
   let message = err.message || 'Something went wrong!';
 
   // In production, hide sensitive internal error details
-  if (process.env.NODE_ENV === 'production' && statusCode === 500) {
+  if (process.env.NODE_ENV === 'production' && statusCode === StatusCodes.INTERNAL_SERVER_ERROR) {
     message = 'Internal server error. Please try again later.';
   }
   res.status(statusCode).json({ success: false, message });
