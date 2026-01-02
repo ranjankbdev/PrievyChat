@@ -2,7 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import { StatusCodes } from 'http-status-codes';
 import { ExpressError } from './utils/ExpressError.js';
-import { mainRouter } from './routes/mainRouter.js';
+import { mainRouter } from './routes/mainRoutes.js';
 
 const app = express();
 

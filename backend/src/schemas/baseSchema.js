@@ -13,7 +13,7 @@ const emailField = Joi.string().email().trim().messages({
   'string.base': 'Email must be a string',
 });
 
-const passwordField = Joi.string().min(6).trim().messages({
+const passwordField = Joi.string().min(4).trim().messages({
   'string.min': 'Password must be at least 6 characters long',
   'string.base': 'Password must be a string',
 });
@@ -24,4 +24,8 @@ const idField = Joi.string().length(24).hex().required().messages({
   'any.required': 'ID is required',
 });
 
-export { nameField, emailField, passwordField, idField };
+const chatIdField = idField.required().messages({
+  'any.required': 'chatId is required',
+});
+
+export { nameField, emailField, passwordField, idField, chatIdField };
