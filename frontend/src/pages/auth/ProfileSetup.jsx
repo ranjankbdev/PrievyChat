@@ -55,7 +55,7 @@ function ProfileSetup() {
       // upload image ONLY if file selected
       if (picture instanceof File) {
         uploadedImageUrl = await uploadProfileImage(picture);
-        console.log(uploadedImageUrl)
+        console.log(uploadedImageUrl);
       }
       const data = await signupUser({
         name: trimmedName,
@@ -132,7 +132,11 @@ function ProfileSetup() {
           </div>
 
           {/* save the user button */}
-          <button disabled={loading} onClick={handleSave} className="btn mt-5 btn-primary w-100">
+          <button
+            disabled={loading}
+            onClick={handleSave}
+            className="btn mt-5 btn-primary-custom w-100"
+          >
             <span>Save Changes</span>
           </button>
         </div>

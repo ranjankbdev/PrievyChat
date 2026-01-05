@@ -140,7 +140,7 @@ const Signup = () => {
         <button
           disabled={isSubmitting}
           type="submit"
-          className="btn btn-primary mb-1 text-center w-100"
+          className="btn btn-primary-custom mb-1 text-center w-100"
         >
           Sign up
         </button>

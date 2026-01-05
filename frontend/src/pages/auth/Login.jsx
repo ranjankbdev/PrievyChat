@@ -85,7 +85,7 @@ const Login = () => {
           </div>
         </div>
 
-        <button disabled={loading} className="btn btn-primary mb-4 w-100">
+        <button disabled={loading} className="btn btn-primary-custom mb-4 w-100">
           <span>Login</span>
         </button>
       </form>
@@ -96,7 +96,7 @@ const Login = () => {
           setPassword('123456');
         }}
         type="button"
-        className="btn btn-primary mb-4 w-100 text-center"
+        className="btn btn-guest-custom mb-4 w-100 text-center"
       >
         Get Guest User Credentials
       </button>

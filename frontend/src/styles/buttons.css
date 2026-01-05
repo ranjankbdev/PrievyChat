@@ -1,0 +1,136 @@
+/* Buttons for whole app */
+
+/* shared base styles */
+.btn-primary-custom,
+.btn-secondary-custom,
+.btn-success-custom,
+.btn-danger-custom,
+.btn-ghost-custom,
+.btn-guest-custom {
+  padding: 10px;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+/* shared hover lift */
+.btn-primary-custom:hover,
+.btn-secondary-custom:hover,
+.btn-success-custom:hover,
+.btn-danger-custom:hover,
+.btn-ghost-custom:hover,
+.btn-icon-custom:hover,
+.btn-guest-custom:hover {
+  transform: translateY(-1px);
+}
+
+/* strong buttons */
+.btn-primary-custom,
+.btn-secondary-custom,
+.btn-success-custom,
+.btn-danger-custom,
+.btn-guest-custom {
+  font-weight: 600;
+}
+
+/* primary */
+.btn-primary-custom {
+  background: linear-gradient(135deg, #38b2ac 0%, #2dd4bf 100%);
+  color: #1a2332;
+  border: 2px solid rgba(9, 9, 9, 0.4) !important;
+  box-shadow: 0 2px 6px rgba(56, 178, 172, 0.2);
+}
+
+.btn-primary-custom:hover {
+  box-shadow: 0 2px 5px rgba(56, 178, 172, 0.3);
+  background: linear-gradient(135deg, #2dd4bf 0%, #14b8a6 100%);
+  color: #ffffff !important;
+}
+
+/* secondary */
+.btn-secondary-custom {
+  background: rgba(56, 178, 172, 0.15);
+  color: #ffffff;
+  border: 2px solid #38b2ac;
+}
+
+.btn-secondary-custom:hover {
+  background: rgba(56, 178, 172, 0.3);
+  border-color: #2dd4bf;
+  color: #ffffff;
+  box-shadow: 0 3px 10px rgba(56, 178, 172, 0.2);
+}
+
+/* success */
+.btn-success-custom {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: #ffffff;
+  border: 2px solid rgba(16, 185, 129, 0.4);
+  box-shadow: 0 2px 6px rgba(16, 185, 129, 0.2);
+}
+
+.btn-success-custom:hover {
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+}
+
+/* danger */
+.btn-danger-custom {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  color: #ffffff;
+  border: 2px solid rgba(239, 68, 68, 0.4);
+  box-shadow: 0 2px 6px rgba(239, 68, 68, 0.2);
+}
+
+.btn-danger-custom:hover {
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+  background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+}
+
+/* ghost */
+.btn-ghost-custom {
+  background: transparent;
+  color: #ffffff;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  font-weight: 500;
+}
+
+.btn-ghost-custom:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.5);
+  box-shadow: 0 2px 8px rgba(255, 255, 255, 0.1);
+}
+
+/* icon */
+.btn-icon-custom {
+  background: linear-gradient(135deg, #38b2ac 0%, #2dd4bf 100%);
+  color: #1a2332;
+  border: 2px solid rgba(56, 178, 172, 0.4);
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  border-radius: 8px;
+}
+
+.btn-icon-custom:hover {
+  box-shadow: 0 4px 12px rgba(56, 178, 172, 0.3);
+  background: linear-gradient(135deg, #2dd4bf 0%, #14b8a6 100%);
+  color: #ffffff !important;
+}
+
+/* guest */
+.btn-guest-custom {
+  background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+  color: #ffffff;
+  border: 2px solid rgba(107, 114, 128, 0.4) !important;
+  box-shadow: 0 2px 6px rgba(107, 114, 128, 0.2);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.btn-guest-custom:hover {
+  box-shadow: 0 4px 12px rgba(107, 114, 128, 0.3);
+  background: linear-gradient(135deg, #4b5563 0%, #374151 100%);
+  color: #ffffff;
+}

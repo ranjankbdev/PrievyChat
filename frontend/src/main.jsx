@@ -4,6 +4,7 @@ import ProjectRoutes from './ProjectRoutes.jsx';
 import GlobalToaster from './components/common/GlobalToaster.jsx';
 import { AuthProvider } from './contexts/AuthContext.jsx';
 import './styles/index.css';
+import './styles/buttons.css';
 
 createRoot(document.getElementById('root')).render(
   <>
