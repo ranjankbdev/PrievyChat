@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import showToast from '../../utils/toastHelper.js';
 import { useAuth } from '../../contexts/AuthContext.jsx';
 import { loginUser } from '../../services/authService.js';
+import Spinner from '../../components/common/Spinner.jsx';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -85,8 +86,9 @@ const Login = () => {
           </div>
         </div>
 
-        <button disabled={loading} className="btn btn-primary-custom mb-4 w-100">
-          <span>Login</span>
+        <button disabled={loading} className="btn-primary-custom mb-4 w-100 position-relative">
+          <span style={{ visibility: loading ? 'hidden' : 'visible' }}>Login</span>
+          {loading && <Spinner size="sm" />}
         </button>
       </form>
 
@@ -96,7 +98,7 @@ const Login = () => {
           setPassword('123456');
         }}
         type="button"
-        className="btn btn-guest-custom mb-4 w-100 text-center"
+        className="btn-guest-custom mb-4 w-100 text-center"
       >
         Get Guest User Credentials
       </button>

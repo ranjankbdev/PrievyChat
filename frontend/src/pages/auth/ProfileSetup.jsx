@@ -6,6 +6,7 @@ import { signupUser } from '../../services/authService.js';
 import { uploadProfileImage } from '../../services/userService.js';
 import useImagePicker from '../../hooks/useImagePicker.js';
 import ProfilePicUploader from '../../components/common/ProfilePicUploader.jsx';
+import Spinner from '../../components/common/Spinner.jsx';
 
 function ProfileSetup() {
   const [email, setEmail] = useState('');
@@ -41,8 +42,12 @@ function ProfileSetup() {
 
   // save the user details / signup
   const handleSave = async () => {
-    const trimmedName = username.trim();
+    if (!email || !password) {
+      showToast('Please complete signup before setting up your profile.', 'error');
+      return;
+    }
 
+    const trimmedName = username.trim();
     if (trimmedName.length < 4) {
       showToast('Username must be at least 4 characters!', 'error');
       return;
@@ -135,9 +140,10 @@ function ProfileSetup() {
           <button
             disabled={loading}
             onClick={handleSave}
-            className="btn mt-5 btn-primary-custom w-100"
+            className="mt-5 btn-primary-custom w-100 position-relative"
           >
-            <span>Save Changes</span>
+            <span style={{ visibility: loading ? 'hidden' : 'visible' }}>Save Changes</span>
+            {loading && <Spinner size="sm" />}
           </button>
         </div>
       </div>
