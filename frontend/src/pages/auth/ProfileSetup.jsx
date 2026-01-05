@@ -1,4 +1,62 @@
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import showToast from '../../utils/toastHelper.js';
+import { useAuth } from '../../contexts/AuthContext.jsx';
+import { signupUser } from '../../services/authService.js';
+
 function ProfileSetup() {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [username, setUsername] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const { authenticateUser } = useAuth();
+
+  const navigate = useNavigate();
+
+  // useeffect for restoring the email and password
+  useEffect(() => {
+    const temp = JSON.parse(localStorage.getItem('tempSignupData'));
+    if (!temp) {
+      return;
+    }
+    setEmail(temp.email);
+    setPassword(temp.password);
+  }, []);
+
+  // save the user details / signup
+  const handleSave = async () => {
+    const trimmedName = username.trim();
+
+    if (trimmedName.length < 4) {
+      showToast('Username must be at least 4 characters!', 'error');
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const data = await signupUser({ name: trimmedName, email, password });
+      showToast('Account created successfully!', 'success');
+      localStorage.removeItem('tempSignupData');
+      authenticateUser(data.token);
+
+      // Clear state
+      setEmail('');
+      setPassword('');
+      setUsername('');
+      navigate('/chats');
+    } catch (error) {
+      showToast(error, 'error');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleBack = () => {
+    localStorage.removeItem('tempSignupData');
+    navigate('/', { replace: true });
+  };
+
   return (
     <div className="modal d-block" tabIndex="-1">
       <div className="modal-dialog modal-dialog-centered">
@@ -8,6 +66,7 @@ function ProfileSetup() {
             <button
               className="btn px-2 py-1 position-absolute pt-2 profile-back-hover"
               style={{ color: '#cbc6c6ff' }}
+              onClick={handleBack}
             >
               <i className="fa-solid fa-arrow-left fs-4"></i>
             </button>
@@ -23,13 +82,19 @@ function ProfileSetup() {
 
             {/* input Fields */}
             <div className="d-flex flex-column justify-content-center mt-3">
-              <input type="text" disabled className="form-control mb-3 w-100" />
-              <input type="text" placeholder="Enter your name" className="form-control w-100" />
+              <input value={email} type="text" disabled className="form-control mb-3 w-100" />
+              <input
+                value={username}
+                onChange={(e) => setUsername(e.target.value.trimStart())}
+                type="text"
+                placeholder="Enter your name"
+                className="form-control w-100"
+              />
             </div>
           </div>
 
           {/* save the user button */}
-          <button className="btn mt-5 btn-primary w-100">
+          <button disabled={loading} onClick={handleSave} className="btn mt-5 btn-primary w-100">
             <span>Save Changes</span>
           </button>
         </div>
