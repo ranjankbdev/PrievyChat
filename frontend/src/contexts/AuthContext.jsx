@@ -61,8 +61,11 @@ export const AuthProvider = ({ children }) => {
   return (
     <AuthContext.Provider value={value}>
       {userLoading ? (
-        <div className="d-flex justify-content-center align-items-center min-vh-100">
-          <FadeLoader color="#0d5d6f" loading={true} size={150} />
+        <div
+          style={{ backgroundColor: 'rgba(14, 115, 138, 0.95)' }}
+          className="d-flex justify-content-center align-items-center min-vh-100"
+        >
+          <FadeLoader color="#06343dff" loading={true} size={150} />
         </div>
       ) : (
         children

@@ -1,8 +1,8 @@
 import axiosInstance from '../config/axiosInstance.js';
 
 // Signup
-const signupUser = async ({ name, email, password }) => {
-  const { data } = await axiosInstance.post('/auth/signup', { name, email, password });
+const signupUser = async ({ name, email, password, picture }) => {
+  const { data } = await axiosInstance.post('/auth/signup', { name, email, password, picture });
   return data;
 };
 

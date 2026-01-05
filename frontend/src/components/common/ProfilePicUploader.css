@@ -1,0 +1,30 @@
+.profile-pic-wrapper {
+  overflow: hidden;
+  position: relative;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease;
+  width: 149px;
+  height: 150px;
+  clip-path: circle(50% at 50% 50%);
+  cursor: pointer;
+}
+
+.profile-pic-wrapper .overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, rgba(56, 178, 172, 0.2), rgba(45, 212, 191, 0.2));
+  opacity: 0.7;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
+}
+
+.profile-pic-wrapper .overlay span {
+  font-size: 38px;
+  font-weight: bold;
+}

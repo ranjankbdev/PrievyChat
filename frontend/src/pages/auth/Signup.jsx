@@ -53,7 +53,7 @@ const Signup = () => {
     // store user data temporarily
     const tempUser = {
       email: email.trim(),
-      password: password.trim(),
+      password: password,
     };
 
     localStorage.setItem('tempSignupData', JSON.stringify(tempUser));
@@ -98,7 +98,7 @@ const Signup = () => {
               required
               type={showPassword ? 'text' : 'password'}
               value={password}
-              onChange={(e) => setPassword(e.target.value.trimStart())}
+              onChange={(e) => setPassword(e.target.value)}
             />
             <button
               onClick={() => setShowPassword(!showPassword)}
@@ -118,13 +118,13 @@ const Signup = () => {
           <div className="input-group">
             <input
               autoComplete="new-password"
-              className="form-control border-success"
+              className="form-control"
               id="confirmPassword"
               placeholder="Confirm your password"
               required
               type={showConfirmPassword ? 'text' : 'password'}
               value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value.trimStart())}
+              onChange={(e) => setConfirmPassword(e.target.value)}
             />
             <button
               onClick={() => setShowConfirmPassword(!showConfirmPassword)}
