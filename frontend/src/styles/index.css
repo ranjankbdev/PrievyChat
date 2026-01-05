@@ -30,3 +30,7 @@ body {
 .cursor-pointer {
   cursor: pointer;
 }
+
+.text-light-gray {
+  color: #cbc6c6ff;
+}

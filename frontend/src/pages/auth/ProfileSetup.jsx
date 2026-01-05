@@ -103,8 +103,7 @@ function ProfileSetup() {
           <div className="d-flex align-items-center mb-3 position-relative border-bottom border-secondary pb-3">
             {/* back button */}
             <button
-              className="btn px-2 py-1 position-absolute pt-2 profile-back-hover"
-              style={{ color: '#cbc6c6ff' }}
+              className="btn px-2 py-1 position-absolute pt-2 profile-back-hover text-light-gray"
               onClick={handleBack}
             >
               <i className="fa-solid fa-arrow-left fs-4"></i>

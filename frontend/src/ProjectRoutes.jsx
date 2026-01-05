@@ -1,15 +1,34 @@
-import { useRoutes } from 'react-router-dom';
+import { useRoutes, Navigate } from 'react-router-dom';
 import AuthPage from './pages/auth/AuthPage.jsx';
 import ChatPage from './pages/ChatPage.jsx';
 import ProfileSetup from './pages/auth/ProfileSetup.jsx';
+import { useAuth } from './contexts/AuthContext.jsx';
+import NotFoundPage from './pages/NotFoundPage.jsx';
 
 function ProjectRoutes() {
-  const routes = useRoutes([
-    // landing page
-    { path: '/', element: <AuthPage /> },
+  const { currentUser } = useAuth();
 
-    { path: '/profile-setup', element: <ProfileSetup /> },
-    { path: '/chats', element: <ChatPage /> },
+  const routes = useRoutes([
+    // landing page for unauthenticated users
+    {
+      path: '/',
+      element: !currentUser ? <AuthPage /> : <Navigate to="/chats" replace />,
+    },
+    // profile setup page route
+    {
+      path: '/profile-setup',
+      element: currentUser ? <Navigate to="/chats" replace /> : <ProfileSetup />,
+    },
+    // chat page route
+    {
+      path: '/chats',
+      element: currentUser ? <ChatPage /> : <Navigate to="/" replace />,
+    },
+    // catch-all route for undefined paths
+    {
+      path: '*',
+      element: <NotFoundPage />,
+    },
   ]);
   return <div className="appContainer">{routes}</div>;
 }
