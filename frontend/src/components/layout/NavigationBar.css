@@ -1,0 +1,24 @@
+/* search nav*/
+.search-nav-hover {
+  background-color: rgba(56, 178, 172, 0.15);
+  border: 1px solid rgba(56, 178, 172, 0.3);
+  transition: all 0.2s ease;
+  backdrop-filter: blur(10px);
+}
+
+.search-nav-hover:hover {
+  background-color: rgba(56, 178, 172, 0.25);
+  border-color: rgba(56, 178, 172, 0.5);
+  transform: translateY(-1px);
+}
+
+/* notification bell */
+.notification-bell-hover {
+  transition: all 0.2s ease;
+  border-radius: 8px;
+}
+
+.notification-bell-hover:hover {
+  background-color: rgba(56, 178, 172, 0.25);
+  transform: scale(1.1);
+}
