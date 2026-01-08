@@ -22,15 +22,6 @@ const ProfileModal = ({ show, setShow }) => {
 
   if (!show) return null; // do not render modal if hidden
 
-  // cleanup blob URL on unmount or when preview changes
-  useEffect(() => {
-    let previousBlob = null;
-    if (preview && preview.startsWith('blob:')) previousBlob = preview;
-    return () => {
-      if (previousBlob) URL.revokeObjectURL(previousBlob);
-    };
-  }, [preview]);
-
   // save profile changes (name and/or picture)
   const handleUpdate = async () => {
     if (!name.trim()) {
@@ -109,7 +100,7 @@ const ProfileModal = ({ show, setShow }) => {
                     className="d-flex flex-column align-items-center m-2"
                     preview={preview}
                     size={150}
-                    onImageChange={(file) => handleImageChange(file, preview)}
+                    onImageChange={(file) => handleImageChange(file)}
                   />
 
                   <input

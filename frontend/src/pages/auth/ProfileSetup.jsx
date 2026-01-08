@@ -29,14 +29,6 @@ function ProfileSetup() {
     setPassword(temp.password);
   }, []);
 
-  useEffect(() => {
-    return () => {
-      if (preview && preview.startsWith('blob:')) {
-        URL.revokeObjectURL(preview);
-      }
-    };
-  }, [preview]);
-
   // handle image selection
   const handleImageChange = useImagePicker(setPicture, setPreview);
 
@@ -77,9 +69,7 @@ function ProfileSetup() {
       setPassword('');
       setUsername('');
       setPicture(null);
-      if (preview && preview.startsWith('blob:')) {
-        URL.revokeObjectURL(preview);
-      }
+
       navigate('/chats');
     } catch (error) {
       showToast(error, 'error');
@@ -89,9 +79,6 @@ function ProfileSetup() {
   };
 
   const handleBack = () => {
-    if (preview && preview.startsWith('blob:')) {
-      URL.revokeObjectURL(preview);
-    }
     localStorage.removeItem('tempSignupData');
     navigate('/', { replace: true });
   };
@@ -118,7 +105,7 @@ function ProfileSetup() {
 
             <ProfilePicUploader
               preview={preview}
-              onImageChange={(file) => handleImageChange(file, preview)}
+              onImageChange={(file) => handleImageChange(file)}
               className="m-2"
             />
 
