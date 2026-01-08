@@ -1,6 +1,7 @@
 import axios from 'axios';
+import axiosInstance from '../config/axiosInstance.js';
 
-// Upload profile picture to Cloudinary (external API - use regular axios)
+// upload profile picture to Cloudinary
 const uploadProfileImage = async (file) => {
   const formData = new FormData();
   formData.append('file', file);
@@ -11,4 +12,10 @@ const uploadProfileImage = async (file) => {
   return res.data.secure_url;
 };
 
-export { uploadProfileImage };
+// update user profile
+const updateUserProfileAPI = async (payload) => {
+  const { data } = await axiosInstance.put('/users/me', payload);
+  return data;
+};
+
+export { uploadProfileImage, updateUserProfileAPI };

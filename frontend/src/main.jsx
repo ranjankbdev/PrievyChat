@@ -5,6 +5,7 @@ import GlobalToaster from './components/common/GlobalToaster.jsx';
 import { AuthProvider } from './contexts/AuthContext.jsx';
 import './styles/index.css';
 import './styles/buttons.css';
+import './styles/hover-effects.css';
 
 createRoot(document.getElementById('root')).render(
   <>
