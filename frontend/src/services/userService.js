@@ -18,4 +18,17 @@ const updateUserProfileAPI = async (payload) => {
   return data;
 };
 
-export { uploadProfileImage, updateUserProfileAPI };
+// search user
+const searchUsers = async (query) => {
+  if (!query.trim()) return [];
+  const { data } = await axiosInstance.get(`/users?search=${query}`);
+  return data;
+};
+
+// select/Access chat
+const accessChatWithUser = async (userId) => {
+  const { data } = await axiosInstance.post('/chats/one-to-one', { userId });
+  return data;
+};
+
+export { uploadProfileImage, updateUserProfileAPI, searchUsers, accessChatWithUser };

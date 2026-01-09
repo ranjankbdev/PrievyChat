@@ -3,6 +3,7 @@ import { useAuth } from '../../contexts/AuthContext.jsx';
 import ClickAwayOverlay from '../common/ClickAwayOverlay.jsx';
 import ProfileModal from '../user/ProfileModal.jsx';
 import Avatar from '../user/Avatar.jsx';
+import UserSearchDrawer from '../user/UserSearchDrawer.jsx';
 import './NavigationBar.css';
 
 function NavigationBar() {
@@ -10,6 +11,7 @@ function NavigationBar() {
 
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
+  const [showSearch, setShowSearch] = useState(false);
 
   // current user name
   const displayName =
@@ -21,7 +23,10 @@ function NavigationBar() {
     <>
       <div className="d-flex justify-content-between p-2">
         {/* left section search user */}
-        <div className="d-flex align-items-center cursor-pointer rounded px-1 py-1 search-nav-hover  ms-2">
+        <div
+          onClick={() => setShowSearch(true)}
+          className="d-flex align-items-center cursor-pointer rounded px-1 py-1 search-nav-hover  ms-2"
+        >
           <i className="mx-2 fa-solid fa-magnifying-glass"></i>
           <span className="mx-3 me-4">Start a new chat</span>
         </div>
@@ -37,7 +42,6 @@ function NavigationBar() {
           <span className="cursor-pointer notification-bell-hover p-1 px-2 me-2">
             <i className="fa-solid fa-bell fs-6"></i>
           </span>
-
           {/* user dropdown */}
           <div
             onClick={() => setShowUserMenu(!showUserMenu)}
@@ -46,7 +50,6 @@ function NavigationBar() {
             <Avatar src={currentUser?.picture} size={40} />
             <span className="fw-semibold ms-2">{displayName}</span>
           </div>
-
           {showUserMenu && (
             <>
               {/* User Menu */}
@@ -77,8 +80,9 @@ function NavigationBar() {
               <ClickAwayOverlay onClickAway={() => setShowUserMenu(false)} />
             </>
           )}
-
           {showProfile && <ProfileModal show={showProfile} setShow={setShowProfile} />}
+
+          {showSearch && <UserSearchDrawer showSearch={showSearch} setShowSearch={setShowSearch} />}
         </div>
       </div>
     </>

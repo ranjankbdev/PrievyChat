@@ -9,20 +9,6 @@
   }
 }
 
-.modal-content {
-  background: linear-gradient(
-    135deg,
-    rgba(13, 93, 111, 0.95) 0%,
-    rgba(23, 133, 158, 0.95) 25%,
-    rgba(5, 87, 106, 0.95) 50%,
-    rgba(32, 53, 73, 0.95) 100%
-  );
-  border-radius: 16px;
-  border: 1px solid rgba(56, 178, 172, 0.2);
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-  animation: modalSlideIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
 .modal-header {
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   padding: 20px 24px;

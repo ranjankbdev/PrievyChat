@@ -86,7 +86,7 @@ function ProfileSetup() {
   return (
     <div className="modal d-block" tabIndex="-1">
       <div className="modal-dialog modal-dialog-centered">
-        <div className="modal-content border-0 p-3">
+        <div className="modal-content glass-bg border-0 p-3">
           <div className="d-flex align-items-center mb-3 position-relative border-bottom border-secondary pb-3">
             {/* back button */}
             <button

@@ -79,7 +79,7 @@ const ProfileModal = ({ show, setShow }) => {
       {/* Modal */}
       <div className="modal fade show d-block" tabIndex="-1" role="dialog" aria-modal="true">
         <div className="modal-dialog modal-dialog-centered">
-          <div className="modal-content border-0 shadow-lg">
+          <div className="modal-content glass-bg border-0 shadow-lg">
             {/* Header */}
             <div className="modal-header py-3">
               <h5 className="modal-title text-center ms-2 text-white">{currentUser?.name}</h5>
