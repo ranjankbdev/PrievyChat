@@ -2,3 +2,43 @@
   background: rgba(15, 30, 45, 0.6);
   overflow: hidden;
 }
+
+.chat-list-height {
+  height: 79vh;
+}
+
+.chat-list-container .rounded {
+  border-radius: 12px !important;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.chat-list-container .rounded::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 3px;
+  background: linear-gradient(180deg, #38b2ac, #2dd4bf);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.chat-list-item:hover::before {
+  opacity: 1;
+}
+
+.chat-list-item {
+  background: #05576a;
+}
+
+.chat-list-item.active-chat {
+  background: #31afa8ff;
+}
+
+.chat-list-item:hover {
+  background: rgba(56, 178, 172, 0.25);
+  transform: translateX(4px);
+}
