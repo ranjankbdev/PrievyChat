@@ -1,0 +1,10 @@
+.user-chip {
+  transition: all 0.2s ease;
+  border-radius: 20px;
+  background-color: #a8d5ff;
+}
+
+.user-chip:hover {
+  background-color: #a8d5ff;
+  transform: scale(1.05);
+}
