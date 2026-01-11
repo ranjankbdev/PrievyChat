@@ -18,3 +18,14 @@
 .nav-search-results {
   max-height: calc(100dvh - 140px);
 }
+
+/* user search list */
+.search-list {
+  transition: all 0.2s ease;
+  border-radius: 10px;
+}
+
+.search-list:hover {
+  background: rgba(16, 241, 230, 0.2) !important;
+  transform: translateX(4px);
+}

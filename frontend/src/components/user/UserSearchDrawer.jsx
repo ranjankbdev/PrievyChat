@@ -1,12 +1,11 @@
 import { useState, useRef, useEffect } from 'react';
-import EmptyState from '../common/EmptyState.jsx';
-import UserListItem from './UserListItem.jsx';
-import Spinner from '../common/Spinner.jsx';
 import { RotateLoader } from 'react-spinners';
-import showToast from '../../utils/toastHelper.js';
 import { useChat } from '../../contexts/ChatContext.jsx';
 import { searchUsers, accessChatWithUser } from '../../services/userService.js';
-import ClickAwayOverlay from '../common/ClickAwayOverlay.jsx';
+import EmptyState from '../common/EmptyState.jsx';
+import Spinner from '../common/Spinner.jsx';
+import showToast from '../../utils/toastHelper.js';
+import Avatar from './Avatar.jsx';
 import './UserSearchDrawer.css';
 
 function UserSearchDrawer({ showSearch, setShowSearch }) {
@@ -29,12 +28,9 @@ function UserSearchDrawer({ showSearch, setShowSearch }) {
     }
   }, [showSearch]);
 
+  // cleanup debounce
   useEffect(() => {
-    return () => {
-      if (debounceRef.current) {
-        clearTimeout(debounceRef.current);
-      }
-    };
+    return () => debounceRef.current && clearTimeout(debounceRef.current);
   }, []);
 
   // search user
@@ -60,9 +56,7 @@ function UserSearchDrawer({ showSearch, setShowSearch }) {
   // debounces user input
   const debounceSearch = (query) => {
     clearTimeout(debounceRef.current);
-    debounceRef.current = setTimeout(() => {
-      handleSearch(query);
-    }, 300);
+    debounceRef.current = setTimeout(() => handleSearch(query), 300);
   };
 
   // access chat when user clicks a search result
@@ -77,7 +71,7 @@ function UserSearchDrawer({ showSearch, setShowSearch }) {
           if (!prev.find((c) => c._id === chat._id)) {
             return [chat, ...prev];
           }
-          return prev; // no change if chat exists
+          return prev;
         });
         setSelectedChat(chat);
         setFetchAgain((prev) => !prev);
@@ -92,8 +86,14 @@ function UserSearchDrawer({ showSearch, setShowSearch }) {
 
   return (
     <>
-      {/* CLICK AWAY OVERLAY */}
-      {showSearch && <ClickAwayOverlay onClickAway={() => setShowSearch(false)} />}
+      {/* Click-away overlay */}
+      {showSearch && (
+        <div
+          className="click-away-overlay"
+          onClick={() => setShowSearch(false)}
+          style={{ zIndex: '1000' }}
+        />
+      )}
 
       <div className={`search-panel glass-bg h-100 ${showSearch ? 'open' : ''}`}>
         {loadingChat && (
@@ -142,8 +142,18 @@ function UserSearchDrawer({ showSearch, setShowSearch }) {
             <Spinner size="md" text="Searching users..." textPosition="left" overlay={false} />
           ) : (
             <ul className="list-group px-4 nav-search-results custom-scrollbar">
-              {searchResult.map((u) => (
-                <UserListItem key={u._id} user={u} onClick={(user) => accessChat(user._id)} />
+              {searchResult.map((user) => (
+                <li
+                  key={user._id}
+                  className="list-group-item bg-transparent d-flex align-items-center border border-light rounded mb-1 search-list cursor-pointer"
+                  onClick={() => accessChat(user._id)}
+                >
+                  <Avatar src={user.picture} size={40} className="me-3" />
+                  <div className="d-flex flex-column justify-content-center">
+                    <span className="fw-semibold text-white">{user.name}</span>
+                    <span className="small text-white-50">{user.email}</span>
+                  </div>
+                </li>
               ))}
             </ul>
           )}
@@ -151,7 +161,6 @@ function UserSearchDrawer({ showSearch, setShowSearch }) {
             <EmptyState variant="inline" message="no users found" icon="fa-solid fa-user-slash" />
           )}
         </>
-        <></>
       </div>
     </>
   );

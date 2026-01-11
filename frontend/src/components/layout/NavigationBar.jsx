@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext.jsx';
-import ClickAwayOverlay from '../common/ClickAwayOverlay.jsx';
 import ProfileModal from '../user/ProfileModal.jsx';
 import Avatar from '../user/Avatar.jsx';
 import UserSearchDrawer from '../user/UserSearchDrawer.jsx';
@@ -21,11 +20,11 @@ function NavigationBar() {
 
   return (
     <>
-      <div className="d-flex justify-content-between p-2">
+      <div className="d-flex justify-content-between p-2 position-relative">
         {/* left section search user */}
         <div
           onClick={() => setShowSearch(true)}
-          className="d-flex align-items-center cursor-pointer rounded px-1 py-1 search-nav-hover  ms-2"
+          className="d-flex align-items-center cursor-pointer rounded px-1 py-1 search-nav  ms-2"
         >
           <i className="mx-2 fa-solid fa-magnifying-glass"></i>
           <span className="mx-3 me-4">Start a new chat</span>
@@ -37,12 +36,12 @@ function NavigationBar() {
         </div>
 
         {/* right section */}
-        <div className="d-flex align-items-center justify-content-end mx-2">
+        <div className="d-flex align-items-center justify-content-end mx-2 position-relative">
           {/* notification */}
-          <span className="cursor-pointer notification-bell-hover p-1 px-2 me-2">
+          <span className="cursor-pointer notification-bell p-1 px-2 me-2">
             <i className="fa-solid fa-bell fs-6"></i>
           </span>
-          {/* user dropdown */}
+          {/* User avatar / dropdown toggle */}
           <div
             onClick={() => setShowUserMenu(!showUserMenu)}
             className="cursor-pointer px-2 py-1 avatar-hover pe-3"
@@ -59,7 +58,7 @@ function NavigationBar() {
                     setShowProfile(true);
                     setShowUserMenu(false);
                   }}
-                  className="dropdown-item px-2 py-1 rounded nav-profile-item-hover"
+                  className="dropdown-item px-2 py-1 rounded nav-profile-item"
                 >
                   <i className="fa-solid fa-user me-2"></i>My Profile
                 </button>
@@ -69,17 +68,22 @@ function NavigationBar() {
                     handleLogout();
                     setShowUserMenu(false);
                   }}
-                  className="dropdown-item px-2 py-1 rounded nav-profile-item-hover"
+                  className="dropdown-item px-2 py-1 rounded nav-profile-item"
                 >
                   <i className="fa-solid fa-right-from-bracket me-2"></i>
                   Logout
                 </button>
               </div>
 
-              {/* overlay */}
-              <ClickAwayOverlay onClickAway={() => setShowUserMenu(false)} />
+              {/* Click-away overlay */}
+              <div
+                onClick={() => setShowUserMenu(false)}
+                className="click-away-overlay"
+                style={{ zIndex: '1000' }}
+              />
             </>
           )}
+
           {showProfile && <ProfileModal show={showProfile} setShow={setShowProfile} />}
 
           {showSearch && <UserSearchDrawer showSearch={showSearch} setShowSearch={setShowSearch} />}

@@ -1,11 +1,11 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext.jsx';
+import { uploadProfileImage, updateUserProfileAPI } from '../../services/userService.js';
 import Avatar from './Avatar.jsx';
 import ProfilePicUploader from '../../components/common/ProfilePicUploader.jsx';
 import useImagePicker from '../../hooks/useImagePicker.js';
 import Spinner from '../../components/common/Spinner.jsx';
 import showToast from '../../utils/toastHelper.js';
-import { uploadProfileImage, updateUserProfileAPI } from '../../services/userService.js';
 import './ProfileModal.css';
 
 const ProfileModal = ({ show, setShow }) => {
@@ -76,9 +76,18 @@ const ProfileModal = ({ show, setShow }) => {
     <>
       {/* Backdrop */}
       <div className="modal-backdrop fade show"></div>
+      {/* Click-away overlay */}
+      <div onClick={handleClose} className="click-away-overlay" style={{ zIndex: '1050' }} />
       {/* Modal */}
-      <div className="modal fade show d-block" tabIndex="-1" role="dialog" aria-modal="true">
-        <div className="modal-dialog modal-dialog-centered">
+      <div
+        className="modal fade show d-block"
+        tabIndex="-1"
+        role="dialog"
+        aria-modal="true"
+        style={{ zIndex: '1055' }}
+        onClick={handleClose}
+      >
+        <div className="modal-dialog modal-dialog-centered" onClick={(e) => e.stopPropagation()}>
           <div className="modal-content glass-bg border-0 shadow-lg">
             {/* Header */}
             <div className="modal-header py-3">

@@ -1,24 +1,24 @@
 /* search nav*/
-.search-nav-hover {
+.search-nav {
   background-color: rgba(56, 178, 172, 0.15);
   border: 1px solid rgba(56, 178, 172, 0.3);
   transition: all 0.2s ease;
   backdrop-filter: blur(10px);
 }
 
-.search-nav-hover:hover {
+.search-nav:hover {
   background-color: rgba(56, 178, 172, 0.25);
   border-color: rgba(56, 178, 172, 0.5);
   transform: translateY(-1px);
 }
 
 /* notification bell */
-.notification-bell-hover {
+.notification-bell {
   transition: all 0.2s ease;
   border-radius: 8px;
 }
 
-.notification-bell-hover:hover {
+.notification-bell:hover {
   background-color: rgba(56, 178, 172, 0.25);
   transform: scale(1.1);
 }
@@ -30,20 +30,20 @@
   top: 45px;
   border-radius: 8px;
   min-width: 160px;
-  z-index: 999;
+  z-index: 1001;
   background: linear-gradient(135deg, rgba(13, 93, 111, 0.98) 0%, rgba(23, 133, 158, 0.98) 100%);
   backdrop-filter: blur(12px);
   border: 1px solid rgba(56, 178, 172, 0.3);
   color: white;
 }
 
-.nav-profile-item-hover {
+.nav-profile-item {
   transition: all 0.2s ease;
   border-radius: 8px;
   color: white;
 }
 
-.nav-profile-item-hover:hover {
+.nav-profile-item:hover {
   background-color: rgba(56, 178, 172, 0.5);
   transform: translateX(3px);
   padding-right: 20px;
@@ -58,3 +58,4 @@
   background-color: rgba(56, 178, 172, 0.25);
   transform: scale(1.02);
 }
+
