@@ -57,7 +57,13 @@ function ChatHeader() {
       )}
 
       {/* Group Chat Settings */}
-      {isGroup && showGroupSettings && <GroupSettingsModal />}
+      {isGroup && showGroupSettings && (
+        <GroupSettingsModal
+          show={showGroupSettings}
+          setShow={setShowGroupSettings}
+          groupChat={selectedChat}
+        />
+      )}
     </>
   );
 }

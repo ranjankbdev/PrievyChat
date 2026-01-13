@@ -6,6 +6,7 @@ function ProfilePicUploader({
   disabled = false,
   size = 150,
   className = '',
+  showLabel = false,
 }) {
   const imageSrc = preview || '/avatar.jpg';
 
@@ -34,6 +35,7 @@ function ProfilePicUploader({
           disabled={disabled}
         />
 
+        {/* show text only if admin */}
         {!disabled && (
           <div className="overlay">
             <span className="text-white">+</span>
@@ -41,7 +43,7 @@ function ProfilePicUploader({
         )}
       </div>
 
-      <p className="text-white d-block text-center my-2">Click to Select</p>
+      {showLabel && <p className="text-white d-block text-center my-2">Click to Select</p>}
     </div>
   );
 }

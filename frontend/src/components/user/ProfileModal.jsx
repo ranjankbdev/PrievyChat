@@ -112,7 +112,7 @@ const ProfileModal = ({ show, setShow, user }) => {
                   <ProfilePicUploader
                     className="d-flex flex-column align-items-center m-2"
                     preview={preview}
-                    size={150}
+                    size={130}
                     onImageChange={(file) => handleImageChange(file)}
                   />
 
