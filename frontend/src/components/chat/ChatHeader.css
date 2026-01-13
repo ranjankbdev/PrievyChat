@@ -1,0 +1,11 @@
+.back-arrow-hover {
+  transition: all 0.2s ease;
+  padding: 8px 12px;
+  border-radius: 8px;
+}
+
+.back-arrow-hover:hover {
+  background-color: rgba(56, 178, 172, 0.25);
+  transform: translateX(-2px);
+}
+

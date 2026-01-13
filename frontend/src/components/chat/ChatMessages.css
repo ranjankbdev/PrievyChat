@@ -1,0 +1,11 @@
+.chatmessage-background {
+  background: linear-gradient(
+    135deg,
+    rgba(13, 93, 111, 0.3) 0%,
+    rgba(23, 133, 158, 0.2) 25%,
+    rgba(5, 87, 106, 0.25) 50%,
+    rgba(32, 53, 73, 0.3) 100%
+  );
+  border-radius: 12px;
+  backdrop-filter: blur(5px);
+}
