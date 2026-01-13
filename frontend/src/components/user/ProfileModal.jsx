@@ -8,12 +8,16 @@ import Spinner from '../../components/common/Spinner.jsx';
 import showToast from '../../utils/toastHelper.js';
 import './ProfileModal.css';
 
-const ProfileModal = ({ show, setShow }) => {
+const ProfileModal = ({ show, setShow, user }) => {
   const { currentUser, updateUserProfile } = useAuth();
 
+  // determine if viewing own profile or another user's profile
+  const isOwnProfile = !user || user._id === currentUser._id;
+  const profileUser = isOwnProfile ? currentUser : user;
+
   const [isEditing, setIsEditing] = useState(false);
-  const [name, setName] = useState(currentUser?.name || '');
-  const [preview, setPreview] = useState(currentUser?.picture || '');
+  const [name, setName] = useState(profileUser?.name || '');
+  const [preview, setPreview] = useState(profileUser?.picture || '');
   const [picture, setPicture] = useState(null);
   const [loading, setLoading] = useState(false);
 
@@ -67,8 +71,8 @@ const ProfileModal = ({ show, setShow }) => {
   // cancel edit and reset form to original values
   const handleCancel = () => {
     setIsEditing(false);
-    setName(currentUser?.name || '');
-    setPreview(currentUser?.picture || '');
+    setName(profileUser?.name || '');
+    setPreview(profileUser?.picture || '');
     setPicture(null);
   };
 
@@ -91,7 +95,7 @@ const ProfileModal = ({ show, setShow }) => {
           <div className="modal-content glass-bg border-0 shadow-lg">
             {/* Header */}
             <div className="modal-header py-3">
-              <h5 className="modal-title text-center ms-2 text-white">{currentUser?.name}</h5>
+              <h5 className="modal-title text-center ms-2 text-white">{profileUser?.name}</h5>
               <button
                 onClick={handleClose}
                 type="button"
@@ -102,7 +106,7 @@ const ProfileModal = ({ show, setShow }) => {
 
             {/* Body */}
             <div className="modal-body text-center">
-              {isEditing ? (
+              {isEditing && isOwnProfile ? (
                 <>
                   {/* edit mode: profile picture uploader + name input */}
                   <ProfilePicUploader
@@ -124,9 +128,9 @@ const ProfileModal = ({ show, setShow }) => {
               ) : (
                 <>
                   {/* view mode: avatar + user info */}
-                  <Avatar src={currentUser?.picture} size={150} className={'mb-3'} />
-                  <h4 className="fw-bold mb-1 text-white">{currentUser?.name}</h4>
-                  <p className="text-white">{currentUser?.email}</p>
+                  <Avatar src={profileUser?.picture} size={150} className={'mb-3'} />
+                  <h4 className="fw-bold mb-1 text-white">{profileUser?.name}</h4>
+                  <p className="text-white">{profileUser?.email}</p>
                 </>
               )}
             </div>
@@ -136,11 +140,16 @@ const ProfileModal = ({ show, setShow }) => {
               {/* view mode: edit profile / close */}
               {!isEditing && (
                 <>
-                  <button onClick={() => setIsEditing(true)} className="btn-secondary-custom px-4">
-                    Edit Profile
-                  </button>
+                  {isOwnProfile && (
+                    <button
+                      onClick={() => setIsEditing(true)}
+                      className="btn-secondary-custom px-4"
+                    >
+                      Edit Profile
+                    </button>
+                  )}
 
-                  <button onClick={() => setShow(false)} className="px-5 btn-ghost-custom">
+                  <button onClick={() => setShow(false)} className="ms-auto px-5 btn-ghost-custom">
                     Close
                   </button>
                 </>
