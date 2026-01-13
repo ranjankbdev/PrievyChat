@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext.jsx';
 import { useChat } from '../../contexts/ChatContext.jsx';
 import { fetchChatsService } from '../../services/chatService.js';
@@ -6,11 +6,14 @@ import { getSenderData } from '../../utils/chatHelper.js';
 import showToast from '../../utils/toastHelper.js';
 import EmptyState from '../common/EmptyState.jsx';
 import Avatar from '../user/Avatar.jsx';
+import CreateGroupModal from './CreateGroupModal.jsx';
 import './ChatList.css';
 
 function ChatList() {
   const { currentUser } = useAuth();
   const { chats, setChats, selectedChat, setSelectedChat, fetchAgain } = useChat();
+
+  const [showGroupchat, setShowGroupchat] = useState(false);
 
   // handle chat selection
   const handleChatSelect = (chat) => {
@@ -33,7 +36,10 @@ function ChatList() {
     <div className="chat-list-container h-100 d-flex flex-column">
       <div className="d-flex justify-content-between align-items-center ms-4">
         <p className="fs-2">My Chats</p>
-        <button className="btn-icon-custom d-flex justify-content-center mt-2 me-2">
+        <button
+          onClick={() => setShowGroupchat(true)}
+          className="btn-icon-custom d-flex justify-content-center mt-2 me-2"
+        >
           <span>New Group Chat</span>
           <i className="fa-solid fa-plus"></i>
         </button>
@@ -80,6 +86,9 @@ function ChatList() {
           </div>
         )}
       </div>
+      {showGroupchat && (
+        <CreateGroupModal showGroup={showGroupchat} setShowGroup={setShowGroupchat} />
+      )}
     </div>
   );
 }

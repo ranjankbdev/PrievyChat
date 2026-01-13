@@ -5,4 +5,9 @@ const fetchChatsService = async () => {
   return data;
 };
 
-export { fetchChatsService };
+const createGroupChat = async (payload) => {
+  const { data } = await axiosInstance.post('/chats/group', payload);
+  return data;
+};
+
+export { fetchChatsService, createGroupChat };
