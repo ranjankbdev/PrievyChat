@@ -33,7 +33,7 @@ function ChatList() {
   }, [currentUser, fetchAgain]);
 
   return (
-    <div className="chat-list-container h-100 d-flex flex-column">
+    <div className="chat-list-container">
       <div className="d-flex justify-content-between align-items-center ms-4">
         <p className="fs-2">My Chats</p>
         <button
@@ -53,7 +53,7 @@ function ChatList() {
             icon="fa-solid fa-magnifying-glass"
           />
         ) : (
-          <div className="d-flex flex-column custom-scrollbar px-2 py-1 chat-list-height">
+          <div className="custom-scrollbar px-2 py-1 chat-list">
             {chats.map((chat) => {
               if (!chat || !chat.users) return null;
 
@@ -74,7 +74,7 @@ function ChatList() {
                 <div
                   key={chat._id}
                   onClick={() => handleChatSelect(chat)}
-                  className={`rounded d-flex align-items-center flex-shrink-0 chat-list-item cursor-pointer mb-2 p-2 ps-3 ${
+                  className={`rounded chat-list-item mb-2 p-2 ps-3 ${
                     selectedChat?._id === chat._id ? 'active-chat' : ''
                   }`}
                 >

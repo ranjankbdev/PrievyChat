@@ -1,0 +1,26 @@
+
+/* message bubble hover */
+.message-bubble {
+  transition: all 0.15s ease;
+}
+
+.message-bubble:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transform: translateY(-1px);
+}
+
+/* message-avatar hover */
+.msg-avatar {
+  transition: all 0.15s ease;
+}
+
+.msg-avatar:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transform: translateY(-1px);
+}
+
+.msg-avt-container {
+  width: 30px;
+  margin-right: 4px;
+  align-self: flex-end;
+}

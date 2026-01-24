@@ -1,5 +1,11 @@
 .chat-container {
   background: linear-gradient(135deg, rgba(20, 35, 50, 0.65) 0%, rgba(15, 30, 45, 0.7) 100%);
   backdrop-filter: blur(15px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  flex-grow: 1;
+  height: 100%;
   box-shadow: -4px 0 20px rgba(0, 0, 0, 0.1);
 }
