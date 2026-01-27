@@ -25,7 +25,7 @@ axiosInstance.interceptors.request.use(
 axiosInstance.interceptors.response.use(
   (response) => response,
   (error) => {
-    throw formatApiError(error);
+    return Promise.reject(formatApiError(error));
   }
 );
 

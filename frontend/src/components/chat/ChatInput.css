@@ -1,0 +1,39 @@
+.input-attachment-menu {
+  position: absolute;
+  bottom: 55px;
+  left: 0;
+  background-color: #05576a;
+  border: 1px solid #3ac1ba;
+  border-radius: 8px;
+  width: 150px;
+}
+
+.btn-input-custom {
+  height: 50px;
+  width: 50px;
+  color: white;
+  background-color: #0c6dff;
+  border-radius: 8px 0 0 8px;
+  border: none;
+  transition: all 0.2s ease;
+}
+
+.btn-input-custom:hover {
+  color: #1a2332;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(56, 178, 172, 0.2);
+}
+
+.img-input,
+.doc-input {
+  background-color: #172f41;
+  text-align: left;
+  width: 100%;
+  color: #fff;
+}
+
+.img-input:hover,
+.doc-input:hover {
+  background: rgba(76, 231, 224, 0.25);
+  color: white;
+}

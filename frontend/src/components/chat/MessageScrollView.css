@@ -24,3 +24,11 @@
   margin-right: 4px;
   align-self: flex-end;
 }
+
+.message-image {
+  max-width: 150px;
+  max-height: 120px;
+  border-radius: 8px;
+  display: block;
+  object-fit: contain;
+}

@@ -34,30 +34,60 @@ const getChatMessages = async (req, res) => {
 };
 
 const createMessage = async (req, res) => {
-  const { content, chatId } = req.body;
+  const { content, chatId, messageType, fileUrl, fileName, fileSize } = req.body;
 
-  // check chat is exist or not
-  const chat = await Chat.findById(chatId).populate('users', '-password');
+  // check chat exists (no unnecessary populate)
+  const chat = await Chat.findById(chatId).select('users');
   if (!chat) {
     throw new ExpressError(StatusCodes.NOT_FOUND, 'Chat not found');
   }
 
-  // Check if requesting user is part of the chat
-  if (!chat.users.map((u) => u._id.toString()).includes(req.user.id)) {
+  // check if requesting user is part of the chat
+  const isMember = chat.users.some((userId) => userId.toString() === req.user.id);
+  if (!isMember) {
     throw new ExpressError(StatusCodes.FORBIDDEN, 'You are not a member of this chat');
   }
 
-  // create the new message
-  let newMessage = await Message.create({
-    sender: req.user.id,
-    content: content.trim(),
-    chat: chatId,
-  });
+  // determine message type
+  const type = messageType || 'text';
 
-  // populate sender → name, email, picture
+  // validate based on message type
+  if (type === 'text') {
+    const trimmedContent = content?.trim() || '';
+    if (!trimmedContent) {
+      throw new ExpressError(StatusCodes.BAD_REQUEST, 'Text message content is required');
+    }
+  }
+
+  if (type === 'image' || type === 'document') {
+    if (!fileUrl) {
+      throw new ExpressError(StatusCodes.BAD_REQUEST, `File URL is required for ${type} messages`);
+    }
+  }
+
+  // create message payload
+  const messageData = {
+    sender: req.user.id,
+    chat: chatId,
+    messageType: type,
+  };
+
+  if (type === 'text') {
+    messageData.content = content?.trim() || '';
+  } else if (type === 'image' || type === 'document') {
+    messageData.fileUrl = fileUrl;
+    messageData.fileName = fileName || 'Unknown';
+    messageData.fileSize = fileSize || 0;
+    messageData.content = content?.trim() || '';
+  }
+
+  // save message
+  let newMessage = await Message.create(messageData);
+
+  // populate sender
   newMessage = await newMessage.populate('sender', 'name email picture');
 
-  // populate chat → users and groupAdmin
+  // populate chat → users & groupAdmin
   newMessage = await newMessage.populate({
     path: 'chat',
     populate: {
@@ -66,24 +96,25 @@ const createMessage = async (req, res) => {
     },
   });
 
-  // update chat's latestMessage
+  // update chat latestMessage
   await Chat.findByIdAndUpdate(chatId, {
     latestMessage: newMessage._id,
   });
 
   // create notifications for all users except sender
-  const notificationPromises = chat.users
-    .filter((user) => user._id.toString() !== req.user.id)
-    .map((user) =>
+  const notifications = chat.users
+    .filter((userId) => userId.toString() !== req.user.id)
+    .map((userId) =>
       Notification.create({
-        recipient: user._id,
+        recipient: userId,
         message: newMessage._id,
         chat: chatId,
       })
     );
 
-  await Promise.all(notificationPromises);
+  await Promise.all(notifications);
 
+  // send response
   res.status(StatusCodes.CREATED).json(newMessage);
 };
 

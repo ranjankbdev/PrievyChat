@@ -2,7 +2,7 @@ import { FadeLoader } from 'react-spinners';
 import MessageScrollView from './MessageScrollView.jsx';
 import './ChatMessages.css';
 
-function ChatMessages({ loading, messages }) {
+function ChatMessages({ loading, messages, fileUploading }) {
   return (
     <div className="chatmessage-background">
       {loading ? (
@@ -11,7 +11,7 @@ function ChatMessages({ loading, messages }) {
         </div>
       ) : (
         <div className="custom-scrollbar flex-grow-1 d-flex flex-column">
-          <MessageScrollView messages={messages} />
+          <MessageScrollView messages={messages} fileUploading={fileUploading} />
         </div>
       )}
     </div>
