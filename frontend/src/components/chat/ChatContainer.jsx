@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useChat } from '../../contexts/ChatContext.jsx';
 import { sendMessage, fetchChatMessages, uploadFile } from '../../services/messageService.js';
+import { useSocket } from '../../contexts/SocketContext.jsx';
 import ChatHeader from './ChatHeader';
 import ChatMessages from './ChatMessages.jsx';
 import ChatInput from './ChatInput';
@@ -8,7 +9,8 @@ import showToast from '../../utils/toastHelper.js';
 import './ChatContainer.css';
 
 function ChatContainer() {
-  const { selectedChat } = useChat();
+  const { selectedChat, setChats, setFetchAgain } = useChat();
+  const { socket } = useSocket();
 
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
@@ -19,6 +21,7 @@ function ChatContainer() {
   const [fileUploading, setFileUploading] = useState(false);
 
   const previewUrlRef = useRef(null);
+  const activeChatRef = useRef(null);
 
   // reusable function to revoke preview URL
   const revokePreviewUrl = () => {
@@ -28,14 +31,35 @@ function ChatContainer() {
     }
   };
 
+  // setup socket event listeners
+  useEffect(() => {
+    if (!socket) return;
+
+    socket.on('message received', (newMessage) => {
+      const activeChat = activeChatRef.current;
+      // if message is NOT for current chat, add to notifications
+      if (!activeChat || activeChat._id !== newMessage.chat._id) {
+        setFetchAgain((prev) => !prev);
+      } else {
+        // message is for current chat, add to messages
+        setMessages((prev) => [...prev, newMessage]);
+      }
+    });
+    return () => {
+      socket.off('message received');
+    };
+  }, [socket]);
+
   // fetch messages when chat is selected
   useEffect(() => {
     const fetchMessages = async () => {
-      if (!selectedChat) return;
+      if (!selectedChat || !socket) return;
       try {
         setLoading(true);
         const data = await fetchChatMessages(selectedChat._id);
         setMessages(data);
+        socket.emit('join chat', selectedChat._id);
+        activeChatRef.current = selectedChat;
       } catch (error) {
         console.error('Error fetching messages:', error);
         showToast(error, 'error');
@@ -63,11 +87,18 @@ function ChatContainer() {
 
   // send a new text message
   const handleSendMessage = async () => {
-    if (!newMessage.trim() || !selectedChat?._id) return;
+    if (!newMessage.trim() || !selectedChat?._id || !socket) return;
 
     try {
       const data = await sendMessage(newMessage.trim(), selectedChat._id);
+      socket.emit('new message', data);
       setMessages((prev) => [...prev, data]);
+      // Move chat to top of list
+      setChats((prevChats) => {
+        const otherChats = prevChats.filter((c) => c._id !== selectedChat._id);
+        const updatedChat = { ...selectedChat, latestMessage: data };
+        return [updatedChat, ...otherChats];
+      });
       setNewMessage('');
     } catch (error) {
       console.error('Error sending message:', error);
@@ -135,7 +166,14 @@ function ChatContainer() {
         previewFile.size
       );
 
+      socket.emit('new message', data);
       setMessages((prev) => [...prev, data]);
+      // Move chat to top of list
+      setChats((prevChats) => {
+        const otherChats = prevChats.filter((c) => c._id !== selectedChat._id);
+        const updatedChat = { ...selectedChat, latestMessage: data };
+        return [updatedChat, ...otherChats];
+      });
       showToast('File sent successfully!', 'success');
     } catch (error) {
       console.error(error);
