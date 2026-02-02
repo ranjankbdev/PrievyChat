@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { useChat } from '../../contexts/ChatContext.jsx';
 import { useAuth } from '../../contexts/AuthContext.jsx';
-import { getSenderData } from '../../utils/chatHelper.js';
+import { useSocket } from '../../contexts/SocketContext.jsx';
+import { getSenderData, getChatOnlineStatus } from '../../utils/chatHelper.js';
 import Avatar from '../../components/user/Avatar.jsx';
 import GroupSettingsModal from './GroupSettingsModal.jsx';
 import ProfileModal from '../user/ProfileModal.jsx';
@@ -10,6 +11,7 @@ import './ChatHeader.css';
 function ChatHeader() {
   const { selectedChat } = useChat();
   const { currentUser } = useAuth();
+  const { onlineUsers } = useSocket();
 
   const [showProfile, setShowProfile] = useState(false);
   const [showGroupSettings, setShowGroupSettings] = useState(false);
@@ -31,6 +33,11 @@ function ChatHeader() {
 
   const isGroup = selectedChat.isGroupChat;
 
+  // get online status
+  const isOnline = getChatOnlineStatus(selectedChat, currentUser._id, onlineUsers);
+  const statusText = isOnline ? 'online' : 'offline';
+  const statusColor = isOnline ? 'text-success' : 'text-secondary';
+
   return (
     <>
       <div className="d-flex align-items-center m-1 me-auto">
@@ -47,7 +54,7 @@ function ChatHeader() {
           <Avatar src={profilePic} size={40} className="me-2 ms-2" />
           <div className="d-flex flex-column">
             <span className="fw-semibold text-white">{name}</span>
-            <span className="small text-white-50">Status</span>
+            <span className={`small ${statusColor}`}>{statusText}</span>
           </div>
         </div>
       </div>

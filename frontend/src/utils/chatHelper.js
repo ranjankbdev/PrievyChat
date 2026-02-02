@@ -6,9 +6,7 @@ const getSenderData = (
   chatName = 'Unnamed Group'
 ) => {
   if (!currentUser) return { name: 'Unknown', user: null };
-
   const otherUser = !isGroupChat ? users.find((u) => u._id !== currentUser._id) : null;
-
   return {
     name: isGroupChat ? chatName : otherUser?.name || 'Unknown',
     user: isGroupChat ? null : otherUser || null,
@@ -33,4 +31,35 @@ const isPreviousMessageSameUser = (messages, m, i) => {
   return i > 0 && messages[i - 1].sender._id === m.sender._id;
 };
 
-export { getSenderData, isMessageFromDifferentSender, isFinalMessage, isPreviousMessageSameUser };
+// check if a specific user is online
+const isUserOnline = (userId, onlineUsers) => {
+  return onlineUsers.has(userId);
+};
+
+// check if any user in group is online (excluding current user)
+const isAnyGroupUserOnline = (chatUsers, currentUserId, onlineUsers) => {
+  return chatUsers.some((user) => user._id !== currentUserId && onlineUsers.has(user._id));
+};
+
+// get online status for chat
+const getChatOnlineStatus = (chat, currentUserId, onlineUsers) => {
+  if (!chat || !chat.users) return false;
+
+  if (chat.isGroupChat) {
+    // for group: check if any user (except current) is online
+    return isAnyGroupUserOnline(chat.users, currentUserId, onlineUsers);
+  } else {
+    // for 1-to-1: check if the other user is online
+    const otherUser = chat.users.find((user) => user._id !== currentUserId);
+    return otherUser ? isUserOnline(otherUser._id, onlineUsers) : false;
+  }
+};
+export {
+  getSenderData,
+  isMessageFromDifferentSender,
+  isFinalMessage,
+  isPreviousMessageSameUser,
+  isUserOnline,
+  isAnyGroupUserOnline,
+  getChatOnlineStatus,
+};
