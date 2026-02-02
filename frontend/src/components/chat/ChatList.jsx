@@ -11,7 +11,7 @@ import './ChatList.css';
 
 function ChatList() {
   const { currentUser } = useAuth();
-  const { chats, setChats, selectedChat, setSelectedChat, fetchAgain } = useChat();
+  const { chats, setChats, selectedChat, setSelectedChat, fetchAgain, notification } = useChat();
 
   const [showGroupchat, setShowGroupchat] = useState(false);
 
@@ -70,6 +70,8 @@ function ChatList() {
                 ? chat.picture || '/avatar.jpg'
                 : user?.picture || '/avatar.jpg';
 
+              const notifCount = notification.filter((n) => n.chat?._id === chat._id).length;
+
               return (
                 <div
                   key={chat._id}
@@ -80,6 +82,11 @@ function ChatList() {
                 >
                   <Avatar src={profilePic} size={55} className={'my-1'} />
                   <span className="fw-semibold fs-5 ms-2">{name}</span>
+                  {notifCount > 0 && (
+                    <span className="badge bg-danger rounded-pill ms-auto">
+                      {notifCount}
+                    </span>
+                  )}
                 </div>
               );
             })}

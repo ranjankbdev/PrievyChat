@@ -1,5 +1,8 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext.jsx';
+import { useChat } from '../../contexts/ChatContext.jsx';
+import { markChatNotificationsAsRead } from '../../services/notificationService.js';
+import { getSenderData } from '../../utils/chatHelper.js';
 import ProfileModal from '../user/ProfileModal.jsx';
 import Avatar from '../user/Avatar.jsx';
 import UserSearchDrawer from '../user/UserSearchDrawer.jsx';
@@ -7,41 +10,131 @@ import './NavigationBar.css';
 
 function NavigationBar() {
   const { currentUser, handleLogout } = useAuth();
+  const { setSelectedChat, notification, setNotification } = useChat();
 
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
+  const [showNotification, setShowNotification] = useState(false);
 
-  // current user name
+  const notifRef = useRef(null);
+  const userMenuRef = useRef(null);
+
   const displayName =
     currentUser?.name?.length > 10
       ? currentUser.name.slice(0, 7) + '…'
       : currentUser?.name || 'Guest';
 
+  const groupNotifications = (notifications) => {
+    const map = {};
+    notifications.forEach((n) => {
+      const key = n.chat._id;
+      if (!map[key]) {
+        map[key] = { chat: n.chat, sender: n.sender, count: 1 };
+      } else {
+        map[key].count += 1;
+      }
+    });
+    return Object.values(map);
+  };
+
+  const handleNotificationClick = async (notif) => {
+    try {
+      await markChatNotificationsAsRead(notif.chat._id);
+      setNotification((prev) => prev.filter((n) => n.chat?._id !== notif.chat._id));
+      setSelectedChat(notif.chat);
+      setShowNotification(false);
+    } catch (error) {
+      console.error('Error handling notification click:', error);
+      setNotification((prev) => prev.filter((n) => n.chat?._id !== notif.chat._id));
+      setSelectedChat(notif.chat);
+      setShowNotification(false);
+    }
+  };
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (showNotification && notifRef.current && !notifRef.current.contains(e.target)) {
+        setShowNotification(false);
+      }
+      if (showUserMenu && userMenuRef.current && !userMenuRef.current.contains(e.target)) {
+        setShowUserMenu(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showNotification, showUserMenu]);
+
+  const grouped = groupNotifications(notification);
+
   return (
     <>
       <div className="d-flex justify-content-between p-2 position-relative">
-        {/* left section search user */}
         <div
           onClick={() => setShowSearch(true)}
-          className="d-flex align-items-center cursor-pointer rounded px-1 py-1 search-nav  ms-2"
+          className="d-flex align-items-center cursor-pointer rounded px-1 py-1 search-nav ms-2"
         >
           <i className="mx-2 fa-solid fa-magnifying-glass"></i>
           <span className="mx-3 me-4">Start a new chat</span>
         </div>
 
-        {/* header */}
         <div className="text-center mx-2">
           <h3>Prievy-Chat</h3>
         </div>
 
-        {/* right section */}
         <div className="d-flex align-items-center justify-content-end mx-2 position-relative">
-          {/* notification */}
-          <span className="cursor-pointer notification-bell p-1 px-2 me-2">
-            <i className="fa-solid fa-bell fs-6"></i>
-          </span>
-          {/* User avatar / dropdown toggle */}
+          <div>
+            <button
+              className="btn p-1 px-2 position-relative notification-bell"
+              onClick={() => setShowNotification(!showNotification)}
+            >
+              {notification.length > 0 && (
+                <span
+                  className="position-absolute top-0 translate-middle badge rounded-pill bg-danger"
+                  style={{ fontSize: '10px', padding: '3px 5px', marginTop: '5px' }}
+                >
+                  {notification.length}
+                </span>
+              )}
+              <i className="fa-solid fa-bell fs-6 text-light"></i>
+            </button>
+
+            {showNotification && (
+              <div ref={notifRef} className="shadow-lg px-1 pb-1 nav-notif custom-scrollbar mt-2">
+                {notification.length === 0 && (
+                  <p className="text-center mt-1 mb-0 rounded">No New Messages</p>
+                )}
+
+                {grouped.map((g) => {
+                  const { name } = getSenderData(
+                    currentUser,
+                    g.chat.users,
+                    g.chat.isGroupChat,
+                    g.chat.chatName
+                  );
+
+                  return (
+                    <button
+                      key={g.chat._id}
+                      className="dropdown-item px-2 py-1 rounded mt-1 d-flex justify-content-between align-items-center nav-notif-item"
+                      onClick={() => handleNotificationClick(g)}
+                    >
+                      <span>
+                        {g.chat.isGroupChat ? `Message in ${name}` : `Message from ${name}`}
+                      </span>
+
+                      <span className="badge bg-danger" style={{ fontSize: '11px' }}>
+                        {g.count}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+
           <div
             onClick={() => setShowUserMenu(!showUserMenu)}
             className="cursor-pointer px-2 py-1 avatar-hover pe-3"
@@ -49,43 +142,33 @@ function NavigationBar() {
             <Avatar src={currentUser?.picture} size={40} />
             <span className="fw-semibold ms-2">{displayName}</span>
           </div>
+
           {showUserMenu && (
-            <>
-              {/* User Menu */}
-              <div className="shadow-lg px-2 py-2 mt-3 nav-profile me-3">
-                <button
-                  onClick={() => {
-                    setShowProfile(true);
-                    setShowUserMenu(false);
-                  }}
-                  className="dropdown-item px-2 py-1 rounded nav-profile-item"
-                >
-                  <i className="fa-solid fa-user me-2"></i>My Profile
-                </button>
+            <div ref={userMenuRef} className="shadow-lg px-2 py-2 mt-3 nav-profile me-3">
+              <button
+                onClick={() => {
+                  setShowProfile(true);
+                  setShowUserMenu(false);
+                }}
+                className="dropdown-item px-2 py-1 rounded nav-profile-item"
+              >
+                <i className="fa-solid fa-user me-2"></i>My Profile
+              </button>
 
-                <button
-                  onClick={() => {
-                    handleLogout();
-                    setShowUserMenu(false);
-                  }}
-                  className="dropdown-item px-2 py-1 rounded nav-profile-item"
-                >
-                  <i className="fa-solid fa-right-from-bracket me-2"></i>
-                  Logout
-                </button>
-              </div>
-
-              {/* Click-away overlay */}
-              <div
-                onClick={() => setShowUserMenu(false)}
-                className="click-away-overlay"
-                style={{ zIndex: '1000' }}
-              />
-            </>
+              <button
+                onClick={() => {
+                  handleLogout();
+                  setShowUserMenu(false);
+                }}
+                className="dropdown-item px-2 py-1 rounded nav-profile-item"
+              >
+                <i className="fa-solid fa-right-from-bracket me-2"></i>
+                Logout
+              </button>
+            </div>
           )}
 
           {showProfile && <ProfileModal show={showProfile} setShow={setShowProfile} />}
-
           {showSearch && <UserSearchDrawer showSearch={showSearch} setShowSearch={setShowSearch} />}
         </div>
       </div>

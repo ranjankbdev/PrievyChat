@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useChat } from '../../contexts/ChatContext.jsx';
 import { sendMessage, fetchChatMessages, uploadFile } from '../../services/messageService.js';
 import { useSocket } from '../../contexts/SocketContext.jsx';
+import { markChatNotificationsAsRead } from '../../services/notificationService.js';
 import ChatHeader from './ChatHeader';
 import ChatMessages from './ChatMessages.jsx';
 import ChatInput from './ChatInput';
@@ -9,7 +10,7 @@ import showToast from '../../utils/toastHelper.js';
 import './ChatContainer.css';
 
 function ChatContainer() {
-  const { selectedChat, setChats, setFetchAgain } = useChat();
+  const { selectedChat, setChats, setFetchAgain, setNotification } = useChat();
   const { socket } = useSocket();
 
   const [messages, setMessages] = useState([]);
@@ -39,6 +40,13 @@ function ChatContainer() {
       const activeChat = activeChatRef.current;
       // if message is NOT for current chat, add to notifications
       if (!activeChat || activeChat._id !== newMessage.chat._id) {
+        setNotification((prev) => {
+          // check for duplicates
+          const exists = prev.some((n) => n._id === newMessage._id);
+          if (exists) return prev;
+
+          return [{ _id: newMessage._id, message: newMessage, chat: newMessage.chat }, ...prev];
+        });
         setFetchAgain((prev) => !prev);
       } else {
         // message is for current chat, add to messages
@@ -48,7 +56,7 @@ function ChatContainer() {
     return () => {
       socket.off('message received');
     };
-  }, [socket]);
+  }, [socket, setFetchAgain, setNotification]);
 
   // fetch messages when chat is selected
   useEffect(() => {
@@ -60,6 +68,8 @@ function ChatContainer() {
         setMessages(data);
         socket.emit('join chat', selectedChat._id);
         activeChatRef.current = selectedChat;
+        await markChatNotificationsAsRead(selectedChat._id);
+        setNotification((prev) => prev.filter((n) => n.chat?._id !== selectedChat._id));
       } catch (error) {
         console.error('Error fetching messages:', error);
         showToast(error, 'error');
@@ -76,7 +86,7 @@ function ChatContainer() {
       setPreviewFile(null);
       setPreviewType(null);
     }
-  }, [selectedChat]);
+  }, [selectedChat, socket, setNotification]);
 
   // cleanup preview URL on unmount
   useEffect(() => {
