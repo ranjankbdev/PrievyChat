@@ -27,6 +27,9 @@ export const SocketProvider = ({ children }) => {
   // track user's own connection status
   const [isConnected, setIsConnected] = useState(false);
 
+  // typing state
+  const [typingUsers, setTypingUsers] = useState({});
+
   useEffect(() => {
     if (!currentUser) return;
 
@@ -67,6 +70,19 @@ export const SocketProvider = ({ children }) => {
       console.log(`User ${userId} is now offline`);
     });
 
+    // listen for typing events
+    newSocket.on('typing', (chatId) => {
+      setTypingUsers((prev) => ({ ...prev, [chatId]: true }));
+    });
+
+    newSocket.on('stop typing', (chatId) => {
+      setTypingUsers((prev) => {
+        const updated = { ...prev };
+        delete updated[chatId];
+        return updated;
+      });
+    });
+
     // handle disconnection
     newSocket.on('disconnect', () => {
       console.log('Socket disconnected');
@@ -78,7 +94,7 @@ export const SocketProvider = ({ children }) => {
     };
   }, [currentUser]);
 
-  const value = { socket, onlineUsers, isConnected };
+  const value = { socket, onlineUsers, isConnected, typingUsers };
 
   return <SocketContext.Provider value={value}>{children}</SocketContext.Provider>;
 };

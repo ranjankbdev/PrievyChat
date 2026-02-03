@@ -11,7 +11,7 @@ import './ChatContainer.css';
 
 function ChatContainer() {
   const { selectedChat, setChats, setFetchAgain, setNotification } = useChat();
-  const { socket } = useSocket();
+  const { socket, typingUsers } = useSocket();
 
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
@@ -20,9 +20,11 @@ function ChatContainer() {
   const [previewFile, setPreviewFile] = useState(null);
   const [previewType, setPreviewType] = useState(null);
   const [fileUploading, setFileUploading] = useState(false);
+  const [isTyping, setIsTyping] = useState(false);
 
   const previewUrlRef = useRef(null);
   const activeChatRef = useRef(null);
+  const typingTimeoutRef = useRef(null);
 
   // reusable function to revoke preview URL
   const revokePreviewUrl = () => {
@@ -62,6 +64,13 @@ function ChatContainer() {
   useEffect(() => {
     const fetchMessages = async () => {
       if (!selectedChat || !socket) return;
+      if (isTyping) {
+        socket.emit('stop typing', selectedChat._id);
+        setIsTyping(false);
+        if (typingTimeoutRef.current) {
+          clearTimeout(typingTimeoutRef.current);
+        }
+      }
       try {
         setLoading(true);
         const data = await fetchChatMessages(selectedChat._id);
@@ -92,14 +101,46 @@ function ChatContainer() {
   useEffect(() => {
     return () => {
       revokePreviewUrl();
+      if (typingTimeoutRef.current) {
+        clearTimeout(typingTimeoutRef.current);
+      }
     };
   }, []);
+
+  // handle typing indicator
+  const handleTyping = (value) => {
+    setNewMessage(value);
+
+    if (!socket || !selectedChat) return;
+
+    // emit typing event if not already typing
+    if (!isTyping) {
+      setIsTyping(true);
+      socket.emit('typing', selectedChat._id);
+    }
+
+    // clear previous timeout
+    if (typingTimeoutRef.current) {
+      clearTimeout(typingTimeoutRef.current);
+    }
+
+    // set new timeout to stop typing after 3 seconds
+    typingTimeoutRef.current = setTimeout(() => {
+      socket.emit('stop typing', selectedChat._id);
+      setIsTyping(false);
+    }, 2000);
+  };
 
   // send a new text message
   const handleSendMessage = async () => {
     if (!newMessage.trim() || !selectedChat?._id || !socket) return;
 
     try {
+      socket.emit('stop typing', selectedChat._id);
+      setIsTyping(false);
+      if (typingTimeoutRef.current) {
+        clearTimeout(typingTimeoutRef.current);
+      }
       const data = await sendMessage(newMessage.trim(), selectedChat._id);
       socket.emit('new message', data);
       setMessages((prev) => [...prev, data]);
@@ -201,10 +242,15 @@ function ChatContainer() {
       {selectedChat ? (
         <>
           <ChatHeader />
-          <ChatMessages loading={loading} messages={messages} fileUploading={fileUploading} />
+          <ChatMessages
+            loading={loading}
+            messages={messages}
+            fileUploading={fileUploading}
+            isTyping={typingUsers[selectedChat._id] || false}
+          />
           <ChatInput
             newMessage={newMessage}
-            setNewMessage={setNewMessage}
+            setNewMessage={handleTyping}
             handleKeyPress={handleKeyPress}
             handleSendMessage={handleSendMessage}
             handleFileSelect={handleFileSelect}

@@ -44,6 +44,16 @@ const connectToSocket = (io) => {
       });
     });
 
+    // typing indicator - user started typing
+    socket.on('typing', (chatId) => {
+      socket.to(chatId).emit('typing', chatId);
+    });
+
+    // typing indicator - user stopped typing
+    socket.on('stop typing', (chatId) => {
+      socket.to(chatId).emit('stop typing', chatId);
+    });
+
     // handle disconnect
     socket.on('disconnect', () => {
       console.log('User disconnected', socket.id);

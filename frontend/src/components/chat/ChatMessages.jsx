@@ -1,8 +1,9 @@
 import { FadeLoader } from 'react-spinners';
 import MessageScrollView from './MessageScrollView.jsx';
+import TypingIndicator from './TypingIndicator.jsx';
 import './ChatMessages.css';
 
-function ChatMessages({ loading, messages, fileUploading }) {
+function ChatMessages({ loading, messages, fileUploading, isTyping }) {
   return (
     <div className="chatmessage-background">
       {loading ? (
@@ -11,7 +12,10 @@ function ChatMessages({ loading, messages, fileUploading }) {
         </div>
       ) : (
         <div className="custom-scrollbar flex-grow-1 d-flex flex-column">
-          <MessageScrollView messages={messages} fileUploading={fileUploading} />
+          <div className="flex-grow-1">
+            <MessageScrollView messages={messages} fileUploading={fileUploading} />
+          </div>
+          {isTyping && <TypingIndicator />}
         </div>
       )}
     </div>
