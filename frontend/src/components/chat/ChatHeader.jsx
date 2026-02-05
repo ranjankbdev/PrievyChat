@@ -9,7 +9,7 @@ import ProfileModal from '../user/ProfileModal.jsx';
 import './ChatHeader.css';
 
 function ChatHeader() {
-  const { selectedChat } = useChat();
+  const { selectedChat, setSelectedChat } = useChat();
   const { currentUser } = useAuth();
   const { onlineUsers } = useSocket();
 
@@ -42,7 +42,10 @@ function ChatHeader() {
     <>
       <div className="d-flex align-items-center m-1 me-auto">
         {/* Back arrow (mobile) */}
-        <span className="p-2 px-3 rounded cursor-pointer back-arrow-hover">
+        <span
+          onClick={() => setSelectedChat(null)}
+          className="p-2 px-3 rounded cursor-pointer back-arrow-hover d-block d-md-none"
+        >
           <i className="fa-solid fa-arrow-left"></i>
         </span>
 

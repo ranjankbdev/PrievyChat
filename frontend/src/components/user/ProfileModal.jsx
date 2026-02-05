@@ -136,7 +136,7 @@ const ProfileModal = ({ show, setShow, user }) => {
             </div>
 
             {/* Footer */}
-            <div className="modal-footer border-0 d-flex justify-content-between">
+            <div className="modal-footer border-0 d-flex justify-content-between flex-nowrap">
               {/* view mode: edit profile / close */}
               {!isEditing && (
                 <>
@@ -161,7 +161,7 @@ const ProfileModal = ({ show, setShow, user }) => {
                   <button
                     disabled={loading}
                     onClick={handleUpdate}
-                    className="btn-success-custom position-relative"
+                    className="btn-success-custom position-relative text-nowrap"
                   >
                     <span style={{ visibility: loading ? 'hidden' : 'visible' }}>Save Changes</span>
                     {loading && <Spinner size="sm" text="Saving..." />}

@@ -35,17 +35,17 @@ function ChatList() {
   return (
     <div className="chat-list-container">
       <div className="d-flex justify-content-between align-items-center ms-4">
-        <p className="fs-2">My Chats</p>
+        <p className="fs-3 fw-bold m-0 p-0">My Chats</p>
         <button
           onClick={() => setShowGroupchat(true)}
-          className="btn-icon-custom d-flex justify-content-center mt-2 me-2"
+          className="btn-icon-custom d-flex justify-content-center me-3 mt-2 mb-2"
         >
-          <span>New Group Chat</span>
+          <span className="d-inline d-md-none d-xl-inline">New Group Chat</span>
           <i className="fa-solid fa-plus"></i>
         </button>
       </div>
 
-      <div className="m-2">
+      <div className="m-2 mt-0">
         {chats.length === 0 ? (
           <EmptyState
             variant="centered"
@@ -53,7 +53,7 @@ function ChatList() {
             icon="fa-solid fa-magnifying-glass"
           />
         ) : (
-          <div className="custom-scrollbar px-2 py-1 chat-list">
+          <div className="custom-scrollbar px-2 py-1 chat-list no-scrollbar">
             {chats.map((chat) => {
               if (!chat || !chat.users) return null;
 
@@ -83,7 +83,7 @@ function ChatList() {
                   <Avatar src={profilePic} size={55} className={'my-1'} />
                   <span className="fw-semibold fs-5 ms-2">{name}</span>
                   {notifCount > 0 && (
-                    <span className="badge bg-danger rounded-pill ms-auto">
+                    <span className="badge bg-danger rounded-pill d-md-none ms-auto">
                       {notifCount}
                     </span>
                   )}

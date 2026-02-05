@@ -11,8 +11,8 @@ function ChatMessages({ loading, messages, fileUploading, isTyping }) {
           <FadeLoader color="#38B2AC" size={150} />
         </div>
       ) : (
-        <div className="custom-scrollbar flex-grow-1 d-flex flex-column">
-          <div className="flex-grow-1">
+        <div className="custom-scrollbar thin-scrollbar flex-grow-1 d-flex flex-column">
+          <div className="flex-grow-1 px-1">
             <MessageScrollView messages={messages} fileUploading={fileUploading} />
           </div>
           {isTyping && <TypingIndicator />}

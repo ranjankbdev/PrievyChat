@@ -115,16 +115,14 @@ function CreateGroupModal({ showGroup, setShowGroup }) {
       />
       {/* Modal container */}
       <div
-        className="position-fixed top-50 start-50 translate-middle"
-        style={{ zIndex: 1055, width: 570 }}
+        className="position-fixed top-50 start-50 translate-middle grp-modal"
+        style={{ zIndex: 1055, minWidth: '570px' }}
         onClick={(e) => e.stopPropagation()}
       >
         <div className="glass-bg rounded px-4 m-2 pt-3">
           {/* Header */}
           <div className="d-flex align-items-center border-bottom border-secondary pb-1 position-relative">
-            <h4 className="modal-title text-white position-absolute start-50 translate-middle-x mb-2">
-              Create Group Chat
-            </h4>
+            <h4 className="modal-title text-white ms-2 mb-2">Create Group Chat</h4>
             <button
               type="button"
               className="btn-close ms-auto close-btn-hover mb-2 p-2"
@@ -161,7 +159,7 @@ function CreateGroupModal({ showGroup, setShowGroup }) {
 
           {/* Selected users */}
           <div
-            className="d-flex flex-wrap gap-1 mb-4 custom-scrollbar mx-4"
+            className="d-flex flex-wrap gap-1 mb-4 custom-scrollbar thin-scrollbar mx-4"
             style={{ height: '75px', alignContent: 'flex-start' }}
           >
             {selectedUsers.map((u) => (
@@ -179,7 +177,7 @@ function CreateGroupModal({ showGroup, setShowGroup }) {
             {loading ? (
               <Spinner text="Searching users..." className="mt-5 pt-3 ms-5" />
             ) : (
-              <ul className="list-group px-4 custom-scrollbar">
+              <ul className="list-group px-4 custom-scrollbar thin-scrollbar">
                 {searchResult.map((user) => (
                   <li key={user._id} className="list-group-item bg-transparent border-0 p-0 pt-1">
                     <div

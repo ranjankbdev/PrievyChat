@@ -1,0 +1,22 @@
+@media (max-width: 767px) {
+  .chat-page__sidebar {
+    width: 100%;
+  }
+
+  .chat-page__content {
+    display: none;
+  }
+
+  .chat-page__sidebar.hide-mobile {
+    display: none;
+  }
+
+  .chat-page__content.show-mobile {
+    display: flex;
+    width: 100%;
+  }
+
+  .grp-modal {
+    min-width: 360px !important;
+  }
+}

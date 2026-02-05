@@ -1,23 +1,34 @@
+/* custom scrollbar */
 .custom-scrollbar {
   overflow-y: auto;
 }
 
-.custom-scrollbar::-webkit-scrollbar {
-  width: 6px;
-}
-
+/* Scrollbar track */
 .custom-scrollbar::-webkit-scrollbar-track {
   background: rgba(236, 243, 242, 0.1);
   border-radius: 10px;
 }
 
+/* Scrollbar thumb (the draggable part) */
 .custom-scrollbar::-webkit-scrollbar-thumb {
   background: linear-gradient(180deg, #38b2ac, #2dd4bf);
   border-radius: 10px;
   border: 1px solid rgba(236, 243, 242, 0.1);
 }
 
+/* Thumb hover effect */
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
   background: linear-gradient(180deg, #2dd4bf, #14b8a6);
   box-shadow: 0 0 10px rgba(56, 178, 172, 0.5);
+}
+
+/* add stick scrollbar */
+.thin-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+/* remove stick scrollbar */
+.no-scrollbar::-webkit-scrollbar {
+  width: 0;
+  background: transparent;
 }

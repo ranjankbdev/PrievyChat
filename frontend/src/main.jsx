@@ -9,6 +9,7 @@ import './styles/index.css';
 import './styles/buttons.css';
 import './styles/hover-effects.css';
 import './styles/scrollbar.css';
+import './styles/Responsive.css';
 
 createRoot(document.getElementById('root')).render(
   <>

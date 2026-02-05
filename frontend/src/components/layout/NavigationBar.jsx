@@ -77,17 +77,17 @@ function NavigationBar() {
           className="d-flex align-items-center cursor-pointer rounded px-1 py-1 search-nav ms-2"
         >
           <i className="mx-2 fa-solid fa-magnifying-glass"></i>
-          <span className="mx-3 me-4">Start a new chat</span>
+          <span className="mx-3 me-4 d-none d-sm-inline">Start a new chat</span>
         </div>
 
-        <div className="text-center mx-2">
+        <div className="text-center mx-2 mt-2">
           <h3>Prievy-Chat</h3>
         </div>
 
         <div className="d-flex align-items-center justify-content-end mx-2 position-relative">
           <div>
             <button
-              className="btn p-1 px-2 position-relative notification-bell"
+              className="btn p-1 px-2 position-relative notification-bell d-none d-md-block"
               onClick={() => setShowNotification(!showNotification)}
             >
               {notification.length > 0 && (
@@ -102,7 +102,10 @@ function NavigationBar() {
             </button>
 
             {showNotification && (
-              <div ref={notifRef} className="shadow-lg px-1 pb-1 nav-notif custom-scrollbar mt-2">
+              <div
+                ref={notifRef}
+                className="shadow-lg px-1 pb-1 nav-notif custom-scrollbar thin-scrollbar mt-2"
+              >
                 {notification.length === 0 && (
                   <p className="text-center mt-1 mb-0 rounded">No New Messages</p>
                 )}
@@ -144,7 +147,7 @@ function NavigationBar() {
           </div>
 
           {showUserMenu && (
-            <div ref={userMenuRef} className="shadow-lg px-2 py-2 mt-3 nav-profile me-3">
+            <div ref={userMenuRef} className="shadow-lg px-2 py-2 mt-3 nav-profile">
               <button
                 onClick={() => {
                   setShowProfile(true);

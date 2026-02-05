@@ -7,8 +7,7 @@
 }
 
 .chat-list {
-  height: 79vh;
-  width: 29vw;
+  height: calc(100vh - 133px);
   display: flex;
   flex-direction: column;
 }

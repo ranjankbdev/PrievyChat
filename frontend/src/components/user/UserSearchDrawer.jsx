@@ -141,7 +141,7 @@ function UserSearchDrawer({ showSearch, setShowSearch }) {
           {loading ? (
             <Spinner size="md" text="Searching users..." textPosition="left" overlay={false} />
           ) : (
-            <ul className="list-group px-4 nav-search-results custom-scrollbar">
+            <ul className="list-group px-4 nav-search-results custom-scrollbar thin-scrollbar">
               {searchResult.map((user) => (
                 <li
                   key={user._id}

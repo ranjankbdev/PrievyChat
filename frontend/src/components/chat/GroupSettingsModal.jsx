@@ -176,8 +176,8 @@ function GroupSettingsModal({ show, setShow, groupChat }) {
       <div className="click-away-overlay" style={{ zIndex: 1050 }} onClick={handleClose} />
       {/* Modal container */}
       <div
-        className="position-fixed top-50 start-50 translate-middle"
-        style={{ zIndex: 1055, width: 570 }}
+        className="position-fixed top-50 start-50 translate-middle grp-modal px-md-4"
+        style={{ zIndex: 1055, minWidth: '570px' }}
         onClick={(e) => e.stopPropagation()}
       >
         <div className="glass-bg rounded px-4 m-2 pt-3">
@@ -218,7 +218,7 @@ function GroupSettingsModal({ show, setShow, groupChat }) {
             {/* RIGHT SIDE - USERS LIST */}
             <div className="flex-grow-1">
               <div
-                className="d-flex flex-wrap gap-1 my-2 custom-scrollbar"
+                className="d-flex flex-wrap gap-1 my-2 custom-scrollbar thin-scrollbar"
                 style={{ height: '135px', alignContent: 'flex-start' }}
               >
                 {selectedChat?.users?.map((u) => (
@@ -260,7 +260,7 @@ function GroupSettingsModal({ show, setShow, groupChat }) {
                 <Spinner textPosition="left" text="Searching users..." />
               ) : (
                 <ul
-                  className="list-group px-4 custom-scrollbar"
+                  className="list-group px-4 custom-scrollbar thin-scrollbar"
                   style={{ maxHeight: '100px', minHeight: '50px' }}
                 >
                   {searchResult.map((user) => (
