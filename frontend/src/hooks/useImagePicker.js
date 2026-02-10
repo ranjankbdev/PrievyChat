@@ -7,33 +7,39 @@ const MAX_SIZE = 1 * 1024 * 1024; // 1MB
 const useImagePicker = (setPicture, setPreview) => {
   const previousBlobRef = useRef(null);
 
-  useEffect(() => {
-    // Cleanup on unmount
-    return () => {
-      if (previousBlobRef.current) {
-        URL.revokeObjectURL(previousBlobRef.current);
-      }
-    };
+  // revoke helper (avoid duplicate code)
+  const revokePreviousBlob = useCallback(() => {
+    if (!previousBlobRef.current) return;
+
+    URL.revokeObjectURL(previousBlobRef.current);
+    previousBlobRef.current = null;
   }, []);
+
+  // validate file
+  const validateFile = (file) => {
+    if (!ALLOWED_TYPES.includes(file.type)) {
+      showToast('Only JPG or PNG allowed!', 'error');
+      return false;
+    }
+
+    if (file.size > MAX_SIZE) {
+      showToast('File size must be less than 1MB!', 'error');
+      return false;
+    }
+
+    return true;
+  };
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => revokePreviousBlob();
+  }, [revokePreviousBlob]);
 
   const handleImageSelection = useCallback(
     (file) => {
-      if (!file) return;
+      if (!file || !validateFile(file)) return;
 
-      if (!ALLOWED_TYPES.includes(file.type)) {
-        showToast('Only JPG or PNG allowed!', 'error');
-        return;
-      }
-
-      if (file.size > MAX_SIZE) {
-        showToast('File size must be less than 1MB!', 'error');
-        return;
-      }
-
-      // Revoke previous blob if exists
-      if (previousBlobRef.current) {
-        URL.revokeObjectURL(previousBlobRef.current);
-      }
+      revokePreviousBlob();
 
       const blobUrl = URL.createObjectURL(file);
       previousBlobRef.current = blobUrl;
@@ -41,10 +47,16 @@ const useImagePicker = (setPicture, setPreview) => {
       setPicture(file);
       setPreview(blobUrl);
     },
-    [setPicture, setPreview]
+    [setPicture, setPreview, revokePreviousBlob]
   );
 
-  return handleImageSelection;
+  const clearImage = useCallback(() => {
+    revokePreviousBlob();
+    setPicture(null);
+    setPreview('');
+  }, [setPicture, setPreview, revokePreviousBlob]);
+
+  return { handleImageSelection, clearImage };
 };
 
 export default useImagePicker;

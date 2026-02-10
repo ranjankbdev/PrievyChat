@@ -33,7 +33,10 @@ function GroupSettingsModal({ show, setShow, groupChat }) {
   const [previewPicture, setPreviewPicture] = useState('');
   const [hasSearched, setHasSearched] = useState(false);
 
-  const handleImageChange = useImagePicker(setSelectedPicture, setPreviewPicture);
+  const { handleImageSelection, clearImage } = useImagePicker(
+    setSelectedPicture,
+    setPreviewPicture
+  );
 
   const isAdmin = selectedChat?.groupAdmin?._id === currentUser._id;
   // select which picture to show
@@ -46,9 +49,8 @@ function GroupSettingsModal({ show, setShow, groupChat }) {
     setSearchResult([]);
     setHasSearched(false);
     setGroupChatName('');
-    setSelectedPicture(null);
-    setPreviewPicture('');
-  }, [setShow]);
+    clearImage();
+  }, [setShow, clearImage]);
 
   useClickOutside(containerRef, handleClose, show);
 
@@ -82,7 +84,7 @@ function GroupSettingsModal({ show, setShow, groupChat }) {
       showToast('Only admins can remove users!', 'error');
       return;
     }
-
+    
     try {
       setLoading(true);
       const data = await removeUserFromGroup(selectedChat._id, removeUser._id);
@@ -165,8 +167,7 @@ function GroupSettingsModal({ show, setShow, groupChat }) {
       setSelectedChat(data);
       setChats((prevChats) => prevChats.map((c) => (c._id === data._id ? data : c)));
       setFetchAgain((prev) => !prev);
-      setSelectedPicture(null);
-      setPreviewPicture('');
+      clearImage();
       showToast('Group picture updated!', 'success');
     } catch (error) {
       showToast(error, 'error');
@@ -198,7 +199,7 @@ function GroupSettingsModal({ show, setShow, groupChat }) {
             <div className="me-2 d-flex flex-column align-items-center">
               <ProfilePicUploader
                 preview={displayPicture}
-                onImageChange={(file) => handleImageChange(file)}
+                onImageChange={handleImageSelection}
                 disabled={pictureLoading || !isAdmin}
                 size={130}
                 showLabel={isAdmin}

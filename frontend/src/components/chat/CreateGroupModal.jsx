@@ -28,13 +28,27 @@ function CreateGroupModal({ showGroup, setShowGroup }) {
 
   const { setChats, setSelectedChat } = useChat();
 
-  const handleImageChange = useImagePicker(setSelectedPicture, setPreviewPicture);
+  const { handleImageSelection, clearImage } = useImagePicker(
+    setSelectedPicture,
+    setPreviewPicture
+  );
 
   const modalRef = useRef(null);
 
-  const handleClose = () => {
+  const resetModal = () => {
+    setGroupChatName('');
+    setSelectedUsers([]);
+    setSearch('');
+    setSearchResult([]);
+    setHasSearched(false);
+    setSubmitLoading(false);
     setShowGroup(false);
+    clearImage();
   };
+
+  const handleClose = useCallback(() => {
+    resetModal();
+  }, [setShowGroup, clearImage]);
 
   useClickOutside(modalRef, handleClose, showGroup);
 
@@ -59,7 +73,7 @@ function CreateGroupModal({ showGroup, setShowGroup }) {
   };
 
   // add user to group
-  const handleGroup = (userToAdd) => {
+  const handleAdd = (userToAdd) => {
     if (selectedUsers.some((u) => u._id === userToAdd._id)) {
       showToast('User already selected!', 'warn');
       return;
@@ -96,17 +110,8 @@ function CreateGroupModal({ showGroup, setShowGroup }) {
       const newChat = await createGroupChat(payload);
       setChats((prev) => [newChat, ...prev]);
       setSelectedChat(newChat);
-      setShowGroup(false);
       showToast('New Group Chat Created!', 'success');
-      // reset all local states
-      setGroupChatName('');
-      setSelectedUsers([]);
-      setSearch('');
-      setSearchResult([]);
-      if (previewPicture && previewPicture.startsWith('blob:')) {
-        URL.revokeObjectURL(previewPicture);
-      }
-      setPreviewPicture('');
+      resetModal();
     } catch (error) {
       showToast(error, 'error');
     } finally {
@@ -129,7 +134,7 @@ function CreateGroupModal({ showGroup, setShowGroup }) {
             <button
               type="button"
               className="btn-close ms-auto close-btn-hover mb-2 p-2"
-              onClick={() => setShowGroup(false)}
+              onClick={handleClose}
             />
           </div>
 
@@ -137,7 +142,7 @@ function CreateGroupModal({ showGroup, setShowGroup }) {
           <div className="d-flex px-1 mt-3">
             <ProfilePicUploader
               preview={previewPicture}
-              onImageChange={(file) => handleImageChange(file)}
+              onImageChange={handleImageSelection}
               className="m-2"
             />
 
@@ -149,6 +154,7 @@ function CreateGroupModal({ showGroup, setShowGroup }) {
                 onChange={(e) => setGroupChatName(e.target.value)}
               />
               <input
+                disabled={loading}
                 className="form-control"
                 placeholder="Add Users"
                 value={search}
@@ -184,7 +190,7 @@ function CreateGroupModal({ showGroup, setShowGroup }) {
                 {searchResult.map((user) => (
                   <li key={user._id} className="list-group-item bg-transparent border-0 p-0 pt-1">
                     <div
-                      onClick={() => handleGroup(user)}
+                      onClick={() => handleAdd(user)}
                       className="d-flex align-items-center border border-light rounded-3 p-2 search-list cursor-pointer"
                     >
                       <Avatar src={user.picture} size={40} className="me-3" />

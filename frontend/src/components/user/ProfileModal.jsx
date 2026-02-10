@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext.jsx';
 import { uploadProfileImage, updateUserProfileAPI } from '../../services/userService.js';
 import Avatar from './Avatar.jsx';
@@ -25,21 +25,28 @@ const ProfileModal = ({ show, setShow, user }) => {
   const modalRef = useRef(null);
 
   // custom hook to handle image selection and preview
-  const handleImageChange = useImagePicker(setPicture, setPreview);
+  const { handleImageSelection, clearImage } = useImagePicker(setPicture, setPreview);
+
+  useEffect(() => {
+    setName(profileUser?.name || '');
+    setPreview(profileUser?.picture || '');
+    setPicture(null);
+    setIsEditing(false);
+  }, [profileUser]);
 
   // cancel edit and reset form to original values
   const handleCancel = () => {
     setIsEditing(false);
     setName(profileUser?.name || '');
     setPreview(profileUser?.picture || '');
-    setPicture(null);
+    clearImage();
   };
 
   // close modal and reset edit state
   const handleClose = useCallback(() => {
     setShow(false);
     handleCancel();
-  }, [setShow, profileUser]);
+  }, [setShow, profileUser, clearImage]);
 
   useClickOutside(modalRef, handleClose, show);
 
@@ -66,14 +73,14 @@ const ProfileModal = ({ show, setShow, user }) => {
       if (isNameChanged) payload.name = name.trim();
       if (isPictureChanged) payload.picture = await uploadProfileImage(picture);
 
-      await updateUserProfileAPI(payload); // persist changes to backend
-      updateUserProfile(payload); // update context/state
+      await updateUserProfileAPI(payload);
+      updateUserProfile(payload);
       if (payload.picture) setPreview(payload.picture);
 
       showToast('Profile updated successfully!', 'success');
       setIsEditing(false);
-      setPicture(null);
       setName(name.trim());
+      clearImage();
     } catch (error) {
       showToast(error, 'error');
     } finally {
@@ -113,7 +120,7 @@ const ProfileModal = ({ show, setShow, user }) => {
                     className="d-flex flex-column align-items-center m-2"
                     preview={preview}
                     size={130}
-                    onImageChange={(file) => handleImageChange(file)}
+                    onImageChange={handleImageSelection}
                   />
 
                   <input
@@ -149,7 +156,7 @@ const ProfileModal = ({ show, setShow, user }) => {
                     </button>
                   )}
 
-                  <button onClick={() => setShow(false)} className="ms-auto px-5 btn-ghost-custom">
+                  <button onClick={handleClose} className="ms-auto px-5 btn-ghost-custom">
                     Close
                   </button>
                 </>

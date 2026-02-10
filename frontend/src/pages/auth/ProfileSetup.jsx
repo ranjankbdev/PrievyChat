@@ -30,7 +30,7 @@ function ProfileSetup() {
   }, []);
 
   // handle image selection
-  const handleImageChange = useImagePicker(setPicture, setPreview);
+  const { handleImageSelection, clearImage } = useImagePicker(setPicture, setPreview);
 
   // save the user details / signup
   const handleSave = async () => {
@@ -68,7 +68,7 @@ function ProfileSetup() {
       setEmail('');
       setPassword('');
       setUsername('');
-      setPicture(null);
+      clearImage();
 
       navigate('/chats');
     } catch (error) {
@@ -79,6 +79,7 @@ function ProfileSetup() {
   };
 
   const handleBack = () => {
+    clearImage();
     localStorage.removeItem('tempSignupData');
     navigate('/', { replace: true });
   };
@@ -105,7 +106,7 @@ function ProfileSetup() {
 
             <ProfilePicUploader
               preview={preview}
-              onImageChange={(file) => handleImageChange(file)}
+              onImageChange={handleImageSelection}
               className="m-2"
             />
 
