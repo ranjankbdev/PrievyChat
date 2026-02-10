@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import { useAuth } from '../../contexts/AuthContext.jsx';
 import { useChat } from '../../contexts/ChatContext.jsx';
 import { searchUsers, uploadProfileImage } from '../../services/userService.js';
@@ -9,6 +9,7 @@ import {
   updateGroupPicture,
 } from '../../services/chatService.js';
 import useImagePicker from '../../hooks/useImagePicker.js';
+import useClickOutside from '../../hooks/useClickOutside.js';
 import UserChip from '../../components/user/UserChip.jsx';
 import EmptyState from '../../components/common/EmptyState.jsx';
 import ProfilePicUploader from '../common/ProfilePicUploader.jsx';
@@ -18,7 +19,9 @@ import showToast from '../../utils/toastHelper.js';
 
 function GroupSettingsModal({ show, setShow, groupChat }) {
   const { currentUser } = useAuth();
-  const { selectedChat, setSelectedChat, setChats, fetchAgain, setFetchAgain } = useChat();
+  const { selectedChat, setSelectedChat, setChats, setFetchAgain } = useChat();
+
+  const containerRef = useRef(null);
 
   const [loading, setLoading] = useState(false);
   const [renameLoading, setRenameLoading] = useState(false);
@@ -46,6 +49,8 @@ function GroupSettingsModal({ show, setShow, groupChat }) {
     setSelectedPicture(null);
     setPreviewPicture('');
   }, [setShow]);
+
+  useClickOutside(containerRef, handleClose, show);
 
   // don't render if modal hidden
   if (!show) return null;
@@ -172,15 +177,12 @@ function GroupSettingsModal({ show, setShow, groupChat }) {
 
   return (
     <>
-      {/* Click-away overlay */}
-      <div className="click-away-overlay" style={{ zIndex: 1050 }} onClick={handleClose} />
-      {/* Modal container */}
+      <div className="modal-backdrop fade show"></div>
       <div
         className="position-fixed top-50 start-50 translate-middle grp-modal px-md-4"
         style={{ zIndex: 1055, minWidth: '570px' }}
-        onClick={(e) => e.stopPropagation()}
       >
-        <div className="glass-bg rounded px-4 m-2 pt-3">
+        <div ref={containerRef} className="glass-bg rounded px-4 m-2 pt-3">
           {/* Header */}
           <div className="d-flex align-items-center border-bottom border-secondary pb-1">
             <h5 className="modal-title text-white mb-2">{groupChat?.chatName}</h5>

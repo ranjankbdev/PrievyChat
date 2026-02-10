@@ -1,9 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState, useRef } from 'react';
 import { useChat } from '../../contexts/ChatContext.jsx';
 import { searchUsers } from '../../services/userService.js';
 import { createGroupChat } from '../../services/chatService.js';
 import { uploadProfileImage } from '../../services/userService.js';
 import useImagePicker from '../../hooks/useImagePicker.js';
+import useClickOutside from '../../hooks/useClickOutside.js';
 import ProfilePicUploader from '../../components/common/ProfilePicUploader.jsx';
 import EmptyState from '../../components/common/EmptyState.jsx';
 import UserChip from '../../components/user/UserChip.jsx';
@@ -28,6 +29,14 @@ function CreateGroupModal({ showGroup, setShowGroup }) {
   const { setChats, setSelectedChat } = useChat();
 
   const handleImageChange = useImagePicker(setSelectedPicture, setPreviewPicture);
+
+  const modalRef = useRef(null);
+
+  const handleClose = () => {
+    setShowGroup(false);
+  };
+
+  useClickOutside(modalRef, handleClose, showGroup);
 
   // search user
   const handleSearch = async (query) => {
@@ -107,17 +116,11 @@ function CreateGroupModal({ showGroup, setShowGroup }) {
 
   return (
     <>
-      {/* Click-away overlay */}
+      <div className="modal-backdrop fade show"></div>
       <div
-        className="click-away-overlay"
-        style={{ zIndex: 1050 }}
-        onClick={() => setShowGroup(false)}
-      />
-      {/* Modal container */}
-      <div
+        ref={modalRef}
         className="position-fixed top-50 start-50 translate-middle grp-modal"
         style={{ zIndex: 1055, minWidth: '570px' }}
-        onClick={(e) => e.stopPropagation()}
       >
         <div className="glass-bg rounded px-4 m-2 pt-3">
           {/* Header */}

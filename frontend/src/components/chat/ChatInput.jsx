@@ -1,4 +1,5 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useRef, useCallback } from 'react';
+import useClickOutside from '../../hooks/useClickOutside.js';
 import './ChatInput.css';
 
 function ChatInput({
@@ -13,19 +14,11 @@ function ChatInput({
   const imageInputRef = useRef(null);
   const documentInputRef = useRef(null);
 
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (menuRef.current && !menuRef.current.contains(event.target)) {
-        setShowFileMenu(false);
-      }
-    };
-    if (showFileMenu) {
-      document.addEventListener('mousedown', handleClickOutside);
-    }
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [showFileMenu]);
+  const handleCloseMenu = useCallback(() => {
+    setShowFileMenu(false);
+  }, []);
+
+  useClickOutside(menuRef, handleCloseMenu, showFileMenu);
 
   return (
     <div className="input-group mb-1">

@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { RotateLoader } from 'react-spinners';
 import { useChat } from '../../contexts/ChatContext.jsx';
 import { searchUsers, accessChatWithUser } from '../../services/userService.js';
@@ -6,6 +6,7 @@ import EmptyState from '../common/EmptyState.jsx';
 import Spinner from '../common/Spinner.jsx';
 import showToast from '../../utils/toastHelper.js';
 import Avatar from './Avatar.jsx';
+import useClickOutside from '../../hooks/useClickOutside.js';
 import './UserSearchDrawer.css';
 
 function UserSearchDrawer({ showSearch, setShowSearch }) {
@@ -18,6 +19,13 @@ function UserSearchDrawer({ showSearch, setShowSearch }) {
   const [loadingChat, setLoadingChat] = useState(false);
 
   const debounceRef = useRef(null);
+  const drawerRef = useRef(null);
+
+  const handleClose = useCallback(() => {
+    setShowSearch(false);
+  }, [setShowSearch]);
+
+  useClickOutside(drawerRef, handleClose, showSearch);
 
   // reset search when drawer closes
   useEffect(() => {
@@ -86,16 +94,8 @@ function UserSearchDrawer({ showSearch, setShowSearch }) {
 
   return (
     <>
-      {/* Click-away overlay */}
-      {showSearch && (
-        <div
-          className="click-away-overlay"
-          onClick={() => setShowSearch(false)}
-          style={{ zIndex: '1000' }}
-        />
-      )}
-
-      <div className={`search-panel glass-bg h-100 ${showSearch ? 'open' : ''}`}>
+      <div className="modal-backdrop fade show"></div>
+      <div ref={drawerRef} className={`search-panel glass-bg h-100 ${showSearch ? 'open' : ''}`}>
         {loadingChat && (
           <div className="modal-overlay">
             <RotateLoader color="#0d6efd" loading={true} size={15} margin={5} />

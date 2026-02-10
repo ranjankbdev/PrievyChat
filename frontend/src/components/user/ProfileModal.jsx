@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import { useAuth } from '../../contexts/AuthContext.jsx';
 import { uploadProfileImage, updateUserProfileAPI } from '../../services/userService.js';
 import Avatar from './Avatar.jsx';
 import ProfilePicUploader from '../../components/common/ProfilePicUploader.jsx';
 import useImagePicker from '../../hooks/useImagePicker.js';
+import useClickOutside from '../../hooks/useClickOutside.js';
 import Spinner from '../../components/common/Spinner.jsx';
 import showToast from '../../utils/toastHelper.js';
 import './ProfileModal.css';
@@ -21,8 +22,26 @@ const ProfileModal = ({ show, setShow, user }) => {
   const [picture, setPicture] = useState(null);
   const [loading, setLoading] = useState(false);
 
+  const modalRef = useRef(null);
+
   // custom hook to handle image selection and preview
   const handleImageChange = useImagePicker(setPicture, setPreview);
+
+  // cancel edit and reset form to original values
+  const handleCancel = () => {
+    setIsEditing(false);
+    setName(profileUser?.name || '');
+    setPreview(profileUser?.picture || '');
+    setPicture(null);
+  };
+
+  // close modal and reset edit state
+  const handleClose = useCallback(() => {
+    setShow(false);
+    handleCancel();
+  }, [setShow, profileUser]);
+
+  useClickOutside(modalRef, handleClose, show);
 
   if (!show) return null; // do not render modal if hidden
 
@@ -62,36 +81,17 @@ const ProfileModal = ({ show, setShow, user }) => {
     }
   };
 
-  // close modal and reset edit state
-  const handleClose = () => {
-    setShow(false);
-    handleCancel();
-  };
-
-  // cancel edit and reset form to original values
-  const handleCancel = () => {
-    setIsEditing(false);
-    setName(profileUser?.name || '');
-    setPreview(profileUser?.picture || '');
-    setPicture(null);
-  };
-
   return (
     <>
-      {/* Backdrop */}
       <div className="modal-backdrop fade show"></div>
-      {/* Click-away overlay */}
-      <div onClick={handleClose} className="click-away-overlay" style={{ zIndex: '1050' }} />
-      {/* Modal */}
       <div
         className="modal fade show d-block"
         tabIndex="-1"
         role="dialog"
         aria-modal="true"
         style={{ zIndex: '1055' }}
-        onClick={handleClose}
       >
-        <div className="modal-dialog modal-dialog-centered" onClick={(e) => e.stopPropagation()}>
+        <div ref={modalRef} className="modal-dialog modal-dialog-centered">
           <div className="modal-content glass-bg border-0 shadow-lg">
             {/* Header */}
             <div className="modal-header py-3">

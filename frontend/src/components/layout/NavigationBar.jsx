@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useCallback } from 'react';
 import { useAuth } from '../../contexts/AuthContext.jsx';
 import { useChat } from '../../contexts/ChatContext.jsx';
 import { markChatNotificationsAsRead } from '../../services/notificationService.js';
@@ -6,6 +6,7 @@ import { getSenderData } from '../../utils/chatHelper.js';
 import ProfileModal from '../user/ProfileModal.jsx';
 import Avatar from '../user/Avatar.jsx';
 import UserSearchDrawer from '../user/UserSearchDrawer.jsx';
+import useClickOutside from '../../hooks/useClickOutside.js';
 import './NavigationBar.css';
 
 function NavigationBar() {
@@ -19,6 +20,17 @@ function NavigationBar() {
 
   const notifRef = useRef(null);
   const userMenuRef = useRef(null);
+
+  const closeNotification = useCallback(() => {
+    setShowNotification(false);
+  }, []);
+
+  const closeUserMenu = useCallback(() => {
+    setShowUserMenu(false);
+  }, []);
+
+  useClickOutside(notifRef, closeNotification, showNotification);
+  useClickOutside(userMenuRef, closeUserMenu, showUserMenu);
 
   const displayName =
     currentUser?.name?.length > 10
@@ -51,21 +63,6 @@ function NavigationBar() {
       setShowNotification(false);
     }
   };
-
-  useEffect(() => {
-    const handleClickOutside = (e) => {
-      if (showNotification && notifRef.current && !notifRef.current.contains(e.target)) {
-        setShowNotification(false);
-      }
-      if (showUserMenu && userMenuRef.current && !userMenuRef.current.contains(e.target)) {
-        setShowUserMenu(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [showNotification, showUserMenu]);
 
   const grouped = groupNotifications(notification);
 
