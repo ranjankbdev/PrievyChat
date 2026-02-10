@@ -108,12 +108,7 @@ function NavigationBar() {
                 )}
 
                 {grouped.map((g) => {
-                  const { name } = getSenderData(
-                    currentUser,
-                    g.chat.users,
-                    g.chat.isGroupChat,
-                    g.chat.chatName
-                  );
+                  const { name } = getSenderData(currentUser, g.chat);
 
                   return (
                     <button

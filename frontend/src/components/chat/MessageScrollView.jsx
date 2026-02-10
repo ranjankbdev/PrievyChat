@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext.jsx';
 import {
   isMessageFromDifferentSender,
-  isFinalMessage,
+  isFirstMessage,
   isPreviousMessageSameUser,
 } from '../../utils/chatHelper.js';
 import EmptyState from '../common/EmptyState.jsx';
@@ -144,8 +144,8 @@ function MessageScrollView({ messages, fileUploading }) {
   const renderMessage = (message, index) => {
     const isCurrentUser = message.sender._id === currentUser._id;
     const showAvatar = isMessageFromDifferentSender(messages, message, index, currentUser._id);
-    const isLastInGroup = isFinalMessage(messages, index);
-    const marginTop = isPreviousMessageSameUser(messages, message, index) ? 0 : '3px';
+    const isLastInGroup = isFirstMessage(messages, index);
+    const marginTop = isPreviousMessageSameUser(messages, message, index) ? 0 : '13px';
 
     const bubbleStyles = {
       ...BASE_BUBBLE_STYLE,
@@ -154,8 +154,8 @@ function MessageScrollView({ messages, fileUploading }) {
       borderRadius: isLastInGroup
         ? isCurrentUser
           ? '1.25rem 1.25rem 0 1.25rem'
-          : '1.25rem 1.25rem 1.25rem 0'
-        : '1.25rem',
+          : '0rem 1.25rem 1.25rem 1.25rem'
+        : '1rem',
     };
 
     return (
@@ -168,11 +168,18 @@ function MessageScrollView({ messages, fileUploading }) {
         {!isCurrentUser && (
           <div className="msg-avt-container">
             {showAvatar && (
-              <Avatar size={30} src={message.sender?.picture} title={message.sender?.name} />
+              <Avatar size={33} src={message.sender?.picture} title={message.sender?.name} />
             )}
           </div>
         )}
-        <span className="d-inline-block p-2 px-3 text-dark message-bubble" style={bubbleStyles}>
+        <span className="d-inline-block py-2 px-3 text-dark message-bubble" style={bubbleStyles}>
+          {!isPreviousMessageSameUser(messages, message, index) &&
+            message.chat?.isGroupChat &&
+            !isCurrentUser && (
+              <span className="sender-name text-secondary small d-block mb-1">
+                {message.sender?.name}
+              </span>
+            )}
           {renderMessageContent(message)}
         </span>
       </div>

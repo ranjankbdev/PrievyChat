@@ -18,25 +18,15 @@ function ChatHeader() {
 
   if (!selectedChat) return null;
 
+  const { isGroupChat } = selectedChat;
+
   // get chat display name and user data
-  const { name, user } = getSenderData(
-    currentUser,
-    selectedChat.users,
-    selectedChat.isGroupChat,
-    selectedChat.chatName
-  );
+  const { name, user, picture } = getSenderData(currentUser, selectedChat);
 
-  // get profile picture
-  const profilePic = selectedChat.isGroupChat
-    ? selectedChat.picture || '/avatar.jpg'
-    : user?.picture || '/avatar.jpg';
-
-  const isGroup = selectedChat.isGroupChat;
+  const profilePic = picture || '/avatar.jpg';
 
   // get online status
   const isOnline = getChatOnlineStatus(selectedChat, currentUser._id, onlineUsers);
-  const statusText = isOnline ? 'online' : 'offline';
-  const statusColor = isOnline ? 'text-success' : 'text-secondary';
 
   return (
     <>
@@ -51,23 +41,27 @@ function ChatHeader() {
 
         {/* chat header */}
         <div
-          onClick={() => (isGroup ? setShowGroupSettings(true) : setShowProfile(true))}
+          onClick={() => {
+            isGroupChat ? setShowGroupSettings(true) : setShowProfile(true);
+          }}
           className="d-flex align-items-center cursor-pointer avatar-hover p-1 pe-3"
         >
           <Avatar src={profilePic} size={40} className="me-2 ms-2" />
           <div className="d-flex flex-column">
             <span className="fw-semibold text-white">{name}</span>
-            <span className={`small ${statusColor}`}>{statusText}</span>
+            <span className={`small ${isOnline ? 'text-success' : 'text-secondary'}`}>
+              {isOnline ? 'online' : 'offline'}
+            </span>
           </div>
         </div>
       </div>
       {/* Single Chat Profile */}
-      {!isGroup && showProfile && (
+      {!isGroupChat && showProfile && (
         <ProfileModal show={showProfile} setShow={setShowProfile} user={user} />
       )}
 
       {/* Group Chat Settings */}
-      {isGroup && showGroupSettings && (
+      {isGroupChat && showGroupSettings && (
         <GroupSettingsModal
           show={showGroupSettings}
           setShow={setShowGroupSettings}

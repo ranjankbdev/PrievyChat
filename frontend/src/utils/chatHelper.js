@@ -1,29 +1,33 @@
 // returns display name and user info for a chat (1-on-1 or group)
-const getSenderData = (
-  currentUser,
-  users = [],
-  isGroupChat = false,
-  chatName = 'Unnamed Group'
-) => {
-  if (!currentUser) return { name: 'Unknown', user: null };
-  const otherUser = !isGroupChat ? users.find((u) => u._id !== currentUser._id) : null;
+const getSenderData = (currentUser, chat) => {
+  if (!currentUser || !chat) {
+    return { name: 'Unknown', user: null, picture: null };
+  }
+
+  if (chat.isGroupChat) {
+    return {
+      name: chat.chatName || 'Unnamed Group',
+      user: null,
+      picture: chat.picture || '/avatar.jpg',
+    };
+  }
+
+  const otherUser = chat.users?.find((u) => u._id !== currentUser._id);
   return {
-    name: isGroupChat ? chatName : otherUser?.name || 'Unknown',
-    user: isGroupChat ? null : otherUser || null,
+    name: otherUser?.name || 'Unknown',
+    user: otherUser || null,
+    picture: otherUser?.picture || '/avatar.jpg',
   };
 };
 
 // whether to show avatar beside a message
 const isMessageFromDifferentSender = (messages, m, i, userId) => {
-  return (
-    m.sender._id !== userId &&
-    (i === messages.length - 1 || messages[i + 1].sender._id !== m.sender._id)
-  );
+  return m.sender._id !== userId && (i === 0 || messages[i - 1].sender._id !== m.sender._id);
 };
 
 // checks if the CURRENT message is the FINAL message
-const isFinalMessage = (messages, i) => {
-  return i === messages.length - 1 || messages[i + 1].sender._id !== messages[i].sender._id;
+const isFirstMessage = (messages, i) => {
+  return i === 0 || messages[i - 1].sender._id !== messages[i].sender._id;
 };
 
 // returns TRUE if previous message is from same sender
@@ -54,10 +58,11 @@ const getChatOnlineStatus = (chat, currentUserId, onlineUsers) => {
     return otherUser ? isUserOnline(otherUser._id, onlineUsers) : false;
   }
 };
+
 export {
   getSenderData,
   isMessageFromDifferentSender,
-  isFinalMessage,
+  isFirstMessage,
   isPreviousMessageSameUser,
   isUserOnline,
   isAnyGroupUserOnline,

@@ -55,20 +55,13 @@ function ChatList() {
         ) : (
           <div className="custom-scrollbar px-2 py-1 chat-list no-scrollbar">
             {chats.map((chat) => {
-              if (!chat || !chat.users) return null;
+              if (!chat) return null;
 
               // get chat display name and user data
-              const { name, user } = getSenderData(
-                currentUser,
-                chat.users,
-                chat.isGroupChat,
-                chat.chatName
-              );
+              const { name, picture } = getSenderData(currentUser, chat);
 
               // get profile picture
-              const profilePic = chat.isGroupChat
-                ? chat.picture || '/avatar.jpg'
-                : user?.picture || '/avatar.jpg';
+              const profilePic = picture || '/avatar.jpg';
 
               const notifCount = notification.filter((n) => n.chat?._id === chat._id).length;
 
