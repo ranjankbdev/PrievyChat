@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { FadeLoader } from 'react-spinners';
 import { useAuth } from '../../contexts/AuthContext.jsx';
 import { useChat } from '../../contexts/ChatContext.jsx';
 import { fetchChatsService } from '../../services/chatService.js';
@@ -14,6 +15,7 @@ function ChatList() {
   const { chats, setChats, selectedChat, setSelectedChat, fetchAgain, notification } = useChat();
 
   const [showGroupchat, setShowGroupchat] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   // handle chat selection
   const handleChatSelect = (chat) => {
@@ -23,10 +25,13 @@ function ChatList() {
   useEffect(() => {
     const fetchChats = async () => {
       try {
+        setLoading(true);
         const data = await fetchChatsService();
         setChats(data);
       } catch (error) {
         showToast(error, 'error');
+      } finally {
+        setLoading(false);
       }
     };
     fetchChats();
@@ -46,7 +51,14 @@ function ChatList() {
       </div>
 
       <div className="m-2 mt-0">
-        {chats.length === 0 ? (
+        {loading ? (
+          <div
+            className="d-flex justify-content-center align-items-center"
+            style={{ minHeight: '88vh' }}
+          >
+            <FadeLoader color="white" loading={true} size={150} />
+          </div>
+        ) : chats.length === 0 ? (
           <EmptyState
             variant="centered"
             message="Search a user to start the chat"

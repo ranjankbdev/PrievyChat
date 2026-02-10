@@ -3,6 +3,7 @@ import { useAuth } from '../../contexts/AuthContext.jsx';
 import { useChat } from '../../contexts/ChatContext.jsx';
 import { markChatNotificationsAsRead } from '../../services/notificationService.js';
 import { getSenderData } from '../../utils/chatHelper.js';
+import { truncateText } from '../../utils/chatHelper.js';
 import ProfileModal from '../user/ProfileModal.jsx';
 import Avatar from '../user/Avatar.jsx';
 import UserSearchDrawer from '../user/UserSearchDrawer.jsx';
@@ -31,11 +32,6 @@ function NavigationBar() {
 
   useClickOutside(notifRef, closeNotification, showNotification);
   useClickOutside(userMenuRef, closeUserMenu, showUserMenu);
-
-  const displayName =
-    currentUser?.name?.length > 10
-      ? currentUser.name.slice(0, 7) + '…'
-      : currentUser?.name || 'Guest';
 
   const groupNotifications = (notifications) => {
     const map = {};
@@ -135,7 +131,9 @@ function NavigationBar() {
             className="cursor-pointer px-2 py-1 avatar-hover pe-3"
           >
             <Avatar src={currentUser?.picture} size={40} />
-            <span className="fw-semibold ms-2">{displayName}</span>
+            <span className="fw-semibold ms-2">
+              {truncateText(currentUser?.name || 'Guest', 7)}
+            </span>
           </div>
 
           {showUserMenu && (

@@ -59,6 +59,9 @@ const getChatOnlineStatus = (chat, currentUserId, onlineUsers) => {
   }
 };
 
+const truncateText = (text, limit = 10) =>
+  text?.length > limit ? text.slice(0, limit) + '...' : text;
+
 export {
   getSenderData,
   isMessageFromDifferentSender,
@@ -67,4 +70,5 @@ export {
   isUserOnline,
   isAnyGroupUserOnline,
   getChatOnlineStatus,
+  truncateText,
 };

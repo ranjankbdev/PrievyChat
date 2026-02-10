@@ -19,7 +19,8 @@
 }
 
 .msg-avt-container {
-  margin-bottom: 32px;
+  margin-bottom: auto;
+  margin-top: 10px;
   width: 30px;
   margin-right: 11px;
   align-self: flex-end;

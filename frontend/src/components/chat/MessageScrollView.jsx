@@ -4,6 +4,7 @@ import {
   isMessageFromDifferentSender,
   isFirstMessage,
   isPreviousMessageSameUser,
+  truncateText,
 } from '../../utils/chatHelper.js';
 import EmptyState from '../common/EmptyState.jsx';
 import Avatar from '../user/Avatar.jsx';
@@ -87,7 +88,7 @@ function MessageScrollView({ messages, fileUploading }) {
       setTimeout(() => {
         document.body.removeChild(link);
         URL.revokeObjectURL(blobUrl);
-      }, 100);
+      }, 1000);
 
       showToast('Download completed!', 'success');
     } catch {
@@ -124,7 +125,9 @@ function MessageScrollView({ messages, fileUploading }) {
               style={{ maxWidth: 200 }}
             >
               <i className="fa-solid fa-file" />
-              <span title={fileName}>{getSafeFileName(fileName, 'Document')}</span>
+              <span title={fileName}>
+                {truncateText(getSafeFileName(fileName, 'Document'), 15)}
+              </span>
             </div>
             <button
               className="btn btn-sm btn-link p-0"
@@ -153,7 +156,7 @@ function MessageScrollView({ messages, fileUploading }) {
       backgroundColor: isCurrentUser ? CURRENT_USER_BG : OTHER_USER_BG,
       borderRadius: isLastInGroup
         ? isCurrentUser
-          ? '1.25rem 1.25rem 0 1.25rem'
+          ? '1.25rem 0 1.25rem 1.25rem'
           : '0rem 1.25rem 1.25rem 1.25rem'
         : '1rem',
     };
@@ -176,9 +179,7 @@ function MessageScrollView({ messages, fileUploading }) {
           {!isPreviousMessageSameUser(messages, message, index) &&
             message.chat?.isGroupChat &&
             !isCurrentUser && (
-              <span className="sender-name text-secondary small d-block mb-1">
-                {message.sender?.name}
-              </span>
+              <span className="text-secondary small d-block mb-1">{message.sender?.name}</span>
             )}
           {renderMessageContent(message)}
         </span>
@@ -216,11 +217,14 @@ function MessageScrollView({ messages, fileUploading }) {
         <>
           <div className="modal-backdrop fade show" onClick={closeImageModal} />
           <div className="modal fade show d-block">
-            <div className="modal-dialog modal-lg modal-dialog-centered m-0 p-0">
+            <div
+              className="modal-dialog modal-lg modal-dialog-centered m-0 p-0 mx-auto"
+              style={{ maxWidth: '550px' }}
+            >
               <div className="modal-content border-0 shadow-lg glass-bg">
                 <div className="modal-header border-secondary">
                   <h5 className="modal-title text-white">
-                    {getSafeFileName(viewImage.fileName, 'Image Preview')}
+                    {truncateText(getSafeFileName(viewImage.fileName, 'Image Preview'), 15)}
                   </h5>
                   <button
                     className="btn-close close-btn-hover"
@@ -231,17 +235,17 @@ function MessageScrollView({ messages, fileUploading }) {
                 <div className="modal-body text-center p-3">
                   <ChatImage
                     src={viewImage.fileUrl}
-                    alt={getSafeFileName(viewImage.fileName, 'Image')}
+                    alt={truncateText(getSafeFileName(viewImage.fileName, 'Image'), 15)}
                     className="msg-img-preview"
                     onError={handleImageError}
                   />
                 </div>
                 <div className="modal-footer border-0">
-                  <button className="btn btn-secondary" onClick={closeImageModal}>
+                  <button className="btn-guest-custom p-0 px-3 py-1" onClick={closeImageModal}>
                     Close
                   </button>
                   <button
-                    className="btn text-dark"
+                    className="btn-icon-custom p-0 px-3 py-1"
                     style={{ backgroundColor: '#38B2AC' }}
                     onClick={() => handleDownload(viewImage.fileUrl, viewImage.fileName)}
                   >

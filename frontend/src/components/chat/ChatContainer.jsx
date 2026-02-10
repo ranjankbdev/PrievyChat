@@ -3,6 +3,7 @@ import { useChat } from '../../contexts/ChatContext.jsx';
 import { sendMessage, fetchChatMessages, uploadFile } from '../../services/messageService.js';
 import { useSocket } from '../../contexts/SocketContext.jsx';
 import { markChatNotificationsAsRead } from '../../services/notificationService.js';
+import { truncateText } from '../../utils/chatHelper.js';
 import ChatHeader from './ChatHeader';
 import ChatMessages from './ChatMessages.jsx';
 import ChatInput from './ChatInput';
@@ -258,7 +259,7 @@ function ChatContainer() {
           {showPreview && previewFile && (
             <div className="modal fade show d-block" tabIndex="-1">
               <div className="modal-dialog modal-dialog-centered">
-                <div className="modal-content border-0 shadow-lg glass-bg">
+                <div className="modal-content border-0 shadow-lg glass-bg px-2">
                   <div className="modal-header border-secondary p-0 px-4 pt-2 pb-1">
                     <h5 className="modal-title text-white">Preview File</h5>
                     <button
@@ -268,24 +269,34 @@ function ChatContainer() {
                     />
                   </div>
 
-                  <div className="modal-body text-center">
+                  <div className="modal-body text-center p-0 m-0">
                     {previewType === 'image' ? (
-                      <img className="msg-img-preview" src={previewUrlRef.current} alt="Preview" />
+                      <>
+                        <p className="my-2 text-white">{truncateText(previewFile.name)}</p>
+                        <img
+                          className="msg-img-preview"
+                          src={previewUrlRef.current}
+                          alt="Preview"
+                        />
+                      </>
                     ) : (
                       <div className="text-white">
                         <i className="fa-solid fa-file fs-1 mb-3"></i>
-                        <p className="mb-0">{previewFile.name}</p>
+                        <p className="mb-0">{truncateText(previewFile.name, 20)}</p>
                         <small>{(previewFile.size / 1024).toFixed(2)} KB</small>
                       </div>
                     )}
                   </div>
 
                   <div className="modal-footer border-0">
-                    <button className="btn btn-secondary" onClick={handleCancelPreview}>
+                    <button
+                      className="btn-guest-custom p-0 px-3 py-2"
+                      onClick={handleCancelPreview}
+                    >
                       Cancel
                     </button>
                     <button
-                      className="btn text-dark"
+                      className="btn-icon-custom p-0 px-4 py-2"
                       style={{ backgroundColor: '#38B2AC' }}
                       onClick={handleSendFile}
                     >

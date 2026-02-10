@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useCallback } from 'react';
 import { useChat } from '../../contexts/ChatContext.jsx';
 import { searchUsers } from '../../services/userService.js';
 import { createGroupChat } from '../../services/chatService.js';
@@ -123,11 +123,14 @@ function CreateGroupModal({ showGroup, setShowGroup }) {
     <>
       <div className="modal-backdrop fade show"></div>
       <div
-        ref={modalRef}
-        className="position-fixed top-50 start-50 translate-middle grp-modal"
-        style={{ zIndex: 1055, minWidth: '570px' }}
+        className="w-100 position-fixed top-50 start-50 translate-middle m-0 p-0 ms-md-5"
+        style={{ zIndex: 1055 }}
       >
-        <div className="glass-bg rounded px-4 m-2 pt-3">
+        <div
+          ref={modalRef}
+          style={{ maxWidth: '28vw', minWidth: '350px' }}
+          className="mx-auto modal-content glass-bg border-0 shadow-lg rounded px-4 pt-3 "
+        >
           {/* Header */}
           <div className="d-flex align-items-center border-bottom border-secondary pb-1 position-relative">
             <h4 className="modal-title text-white ms-2 mb-2">Create Group Chat</h4>
@@ -154,7 +157,6 @@ function CreateGroupModal({ showGroup, setShowGroup }) {
                 onChange={(e) => setGroupChatName(e.target.value)}
               />
               <input
-                disabled={loading}
                 className="form-control"
                 placeholder="Add Users"
                 value={search}
@@ -178,13 +180,13 @@ function CreateGroupModal({ showGroup, setShowGroup }) {
 
           {/* Results */}
           <div
-            className="list-group grp-search-results mb-1 mx-4"
+            className="list-group grp-search-results mb-1 mx-4 position-relative"
             style={{
-              height: searchResult.length > 0 ? '100px' : 'auto',
+              height: searchResult.length > 0 ? '100px' : '50px',
             }}
           >
             {loading ? (
-              <Spinner text="Searching users..." className="mt-5 pt-3 ms-5" />
+              <Spinner text="Searching users..." className=" ms-5" />
             ) : (
               <ul className="list-group px-4 custom-scrollbar thin-scrollbar">
                 {searchResult.map((user) => (

@@ -52,7 +52,6 @@ function ProfileSetup() {
       // upload image ONLY if file selected
       if (picture instanceof File) {
         uploadedImageUrl = await uploadProfileImage(picture);
-        console.log(uploadedImageUrl);
       }
       const data = await signupUser({
         name: trimmedName,

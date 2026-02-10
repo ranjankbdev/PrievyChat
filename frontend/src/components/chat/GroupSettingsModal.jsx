@@ -84,7 +84,7 @@ function GroupSettingsModal({ show, setShow, groupChat }) {
       showToast('Only admins can remove users!', 'error');
       return;
     }
-    
+
     try {
       setLoading(true);
       const data = await removeUserFromGroup(selectedChat._id, removeUser._id);
@@ -180,8 +180,8 @@ function GroupSettingsModal({ show, setShow, groupChat }) {
     <>
       <div className="modal-backdrop fade show"></div>
       <div
-        className="position-fixed top-50 start-50 translate-middle grp-modal px-md-4"
-        style={{ zIndex: 1055, minWidth: '570px' }}
+        className="position-fixed top-50 start-50 translate-middle px-md-4 w-100"
+        style={{ zIndex: 1055, minWidth: '320px', maxWidth: '570px' }}
       >
         <div ref={containerRef} className="glass-bg rounded px-4 m-2 pt-3">
           {/* Header */}
@@ -258,14 +258,17 @@ function GroupSettingsModal({ show, setShow, groupChat }) {
           />
 
           <div className={`border-bottom mb-2 border-secondary ${loading && 'mt-5 pb-4'}`}>
-            <div className="list-group mb-2 position-relative">
+            <div
+              className="list-group mb-2 position-relative"
+              style={{ maxHeight: '100px', minHeight: '50px' }}
+            >
               {loading ? (
-                <Spinner textPosition="left" text="Searching users..." />
+                <Spinner
+                  text="Searching users..."
+                  className="position-absolute start-50 translate-middle-x text-nowrap"
+                />
               ) : (
-                <ul
-                  className="list-group px-4 custom-scrollbar thin-scrollbar"
-                  style={{ maxHeight: '100px', minHeight: '50px' }}
-                >
+                <ul className="list-group px-4 custom-scrollbar thin-scrollbar">
                   {searchResult.map((user) => (
                     <li key={user._id} className="list-group-item bg-transparent border-0 p-0 pt-1">
                       <div

@@ -13,6 +13,7 @@
 
 .chat-page__sidebar {
   width: 33%;
+  flex-shrink: 0;
 }
 
 .chat-page__content {
