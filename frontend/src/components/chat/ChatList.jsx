@@ -12,15 +12,11 @@ import './ChatList.css';
 
 function ChatList() {
   const { currentUser } = useAuth();
-  const { chats, setChats, selectedChat, setSelectedChat, fetchAgain, notification } = useChat();
+  const { chats, setChats, selectedChat, setSelectedChat, fetchAgain, groupedNotifications } =
+    useChat();
 
   const [showGroupchat, setShowGroupchat] = useState(false);
   const [loading, setLoading] = useState(true);
-
-  // handle chat selection
-  const handleChatSelect = (chat) => {
-    setSelectedChat(chat);
-  };
 
   useEffect(() => {
     const fetchChats = async () => {
@@ -36,6 +32,10 @@ function ChatList() {
     };
     fetchChats();
   }, [currentUser, fetchAgain]);
+
+  const handleChatSelect = (chat) => {
+    setSelectedChat(chat);
+  };
 
   return (
     <div className="chat-list-container">
@@ -68,14 +68,10 @@ function ChatList() {
           <div className="custom-scrollbar px-2 py-1 chat-list no-scrollbar">
             {chats.map((chat) => {
               if (!chat) return null;
-
-              // get chat display name and user data
+              // get chat display name and user data, notification
               const { name, picture } = getSenderData(currentUser, chat);
-
-              // get profile picture
               const profilePic = picture || '/avatar.jpg';
-
-              const notifCount = notification.filter((n) => n.chat?._id === chat._id).length;
+              const notifCount = groupedNotifications[chat._id]?.count || 0;
 
               return (
                 <div

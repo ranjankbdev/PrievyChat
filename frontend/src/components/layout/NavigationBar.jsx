@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback, useMemo } from 'react';
 import { useAuth } from '../../contexts/AuthContext.jsx';
 import { useChat } from '../../contexts/ChatContext.jsx';
 import { markChatNotificationsAsRead } from '../../services/notificationService.js';
@@ -12,7 +12,7 @@ import './NavigationBar.css';
 
 function NavigationBar() {
   const { currentUser, handleLogout } = useAuth();
-  const { setSelectedChat, notification, setNotification } = useChat();
+  const { setSelectedChat, notification, setNotification, groupedNotifications } = useChat();
 
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
@@ -33,34 +33,17 @@ function NavigationBar() {
   useClickOutside(notifRef, closeNotification, showNotification);
   useClickOutside(userMenuRef, closeUserMenu, showUserMenu);
 
-  const groupNotifications = (notifications) => {
-    const map = {};
-    notifications.forEach((n) => {
-      const key = n.chat._id;
-      if (!map[key]) {
-        map[key] = { chat: n.chat, sender: n.sender, count: 1 };
-      } else {
-        map[key].count += 1;
-      }
-    });
-    return Object.values(map);
-  };
-
   const handleNotificationClick = async (notif) => {
     try {
       await markChatNotificationsAsRead(notif.chat._id);
-      setNotification((prev) => prev.filter((n) => n.chat?._id !== notif.chat._id));
-      setSelectedChat(notif.chat);
-      setShowNotification(false);
     } catch (error) {
-      console.error('Error handling notification click:', error);
+      console.error('Failed to mark notifications as read:', error);
+    } finally {
       setNotification((prev) => prev.filter((n) => n.chat?._id !== notif.chat._id));
       setSelectedChat(notif.chat);
       setShowNotification(false);
     }
   };
-
-  const grouped = groupNotifications(notification);
 
   return (
     <>
@@ -103,7 +86,7 @@ function NavigationBar() {
                   <p className="text-center mt-1 mb-0 rounded">No New Messages</p>
                 )}
 
-                {grouped.map((g) => {
+                {Object.values(groupedNotifications).map((g) => {
                   const { name } = getSenderData(currentUser, g.chat);
 
                   return (

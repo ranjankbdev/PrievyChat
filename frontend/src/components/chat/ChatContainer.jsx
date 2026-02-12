@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useChat } from '../../contexts/ChatContext.jsx';
 import { sendMessage, fetchChatMessages, uploadFile } from '../../services/messageService.js';
 import { useSocket } from '../../contexts/SocketContext.jsx';
@@ -72,6 +72,7 @@ function ChatContainer() {
           clearTimeout(typingTimeoutRef.current);
         }
       }
+      
       try {
         setLoading(true);
         const data = await fetchChatMessages(selectedChat._id);
@@ -81,7 +82,6 @@ function ChatContainer() {
         await markChatNotificationsAsRead(selectedChat._id);
         setNotification((prev) => prev.filter((n) => n.chat?._id !== selectedChat._id));
       } catch (error) {
-        console.error('Error fetching messages:', error);
         showToast(error, 'error');
       } finally {
         setLoading(false);
@@ -104,36 +104,41 @@ function ChatContainer() {
       revokePreviewUrl();
       if (typingTimeoutRef.current) {
         clearTimeout(typingTimeoutRef.current);
+        typingTimeoutRef.current = null;
       }
+      activeChatRef.current = null;
     };
   }, []);
 
   // handle typing indicator
-  const handleTyping = (value) => {
-    setNewMessage(value);
+  const handleTyping = useCallback(
+    (value) => {
+      setNewMessage(value);
 
-    if (!socket || !selectedChat) return;
+      if (!socket || !selectedChat) return;
 
-    // emit typing event if not already typing
-    if (!isTyping) {
-      setIsTyping(true);
-      socket.emit('typing', selectedChat._id);
-    }
+      // emit typing event if not already typing
+      if (!isTyping) {
+        setIsTyping(true);
+        socket.emit('typing', selectedChat._id);
+      }
 
-    // clear previous timeout
-    if (typingTimeoutRef.current) {
-      clearTimeout(typingTimeoutRef.current);
-    }
+      // clear previous timeout
+      if (typingTimeoutRef.current) {
+        clearTimeout(typingTimeoutRef.current);
+      }
 
-    // set new timeout to stop typing after 3 seconds
-    typingTimeoutRef.current = setTimeout(() => {
-      socket.emit('stop typing', selectedChat._id);
-      setIsTyping(false);
-    }, 2000);
-  };
+      // set new timeout to stop typing after 3 seconds
+      typingTimeoutRef.current = setTimeout(() => {
+        socket.emit('stop typing', selectedChat._id);
+        setIsTyping(false);
+      }, 2000);
+    },
+    [socket, selectedChat]
+  );
 
   // send a new text message
-  const handleSendMessage = async () => {
+  const handleSendMessage = useCallback(async () => {
     if (!newMessage.trim() || !selectedChat?._id || !socket) return;
 
     try {
@@ -156,40 +161,45 @@ function ChatContainer() {
       console.error('Error sending message:', error);
       showToast(error, 'error');
     }
-  };
+  }, [newMessage, selectedChat, socket]);
 
   // handle Enter key press
-  const handleKeyPress = (event) => {
-    if (event.key === 'Enter' && !event.shiftKey && newMessage.trim()) {
-      event.preventDefault();
-      handleSendMessage();
-    }
-  };
+  const handleKeyPress = useCallback(
+    (event) => {
+      if (event.key === 'Enter' && !event.shiftKey && newMessage.trim()) {
+        event.preventDefault();
+        handleSendMessage();
+      }
+    },
+    [newMessage, handleSendMessage]
+  );
 
   // handle file selection with preview
-  const handleFileSelect = (e, type) => {
+  const handleFileSelect = useCallback((e, type) => {
     const file = e.target.files[0];
     if (!file) return;
 
-    if (file.size > 500000) {
-      showToast('File size must not exceed 500KB', 'error');
+    // Validate file size
+    if (file.size === 0 || file.size > 500000) {
+      showToast(
+        file.size === 0 ? 'Cannot upload empty file' : 'File size must not exceed 500KB',
+        'error'
+      );
       e.target.value = '';
       return;
     }
 
     // revoke previous preview URL if exists
     revokePreviewUrl();
-
     // create new preview URL
     const newPreviewUrl = URL.createObjectURL(file);
     previewUrlRef.current = newPreviewUrl;
-
     setPreviewFile(file);
     setPreviewType(type);
     setShowPreview(true);
 
     e.target.value = '';
-  };
+  }, []);
 
   // cancel file preview
   const handleCancelPreview = () => {
@@ -202,20 +212,20 @@ function ChatContainer() {
   // send file after preview confirmation
   const handleSendFile = async () => {
     if (!previewFile) return;
+    const fileToUpload = previewFile;
+    const typeToUpload = previewType;
 
     try {
       setFileUploading(true);
       setShowPreview(false);
-
-      const fileUrl = await uploadFile(previewFile);
-
+      const fileUrl = await uploadFile(fileToUpload);
       const data = await sendMessage(
         '',
         selectedChat._id,
-        previewType,
+        typeToUpload,
         fileUrl,
-        previewFile.name,
-        previewFile.size
+        fileToUpload.name,
+        fileToUpload.size
       );
 
       socket.emit('new message', data);

@@ -16,15 +16,18 @@ function CreateGroupModal({ showGroup, setShowGroup }) {
   // don't render if modal hidden
   if (!showGroup) return null;
 
+  const [loadingState, setLoadingState] = useState({ search: false, submit: false });
   const [groupChatName, setGroupChatName] = useState('');
   const [selectedUsers, setSelectedUsers] = useState([]);
   const [search, setSearch] = useState('');
   const [searchResult, setSearchResult] = useState([]);
-  const [loading, setLoading] = useState(false);
   const [selectedPicture, setSelectedPicture] = useState(null);
   const [previewPicture, setPreviewPicture] = useState('');
-  const [submitLoading, setSubmitLoading] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
+
+  const setLoading = useCallback((key, value) => {
+    setLoadingState((prev) => ({ ...prev, [key]: value }));
+  }, []);
 
   const { setChats, setSelectedChat } = useChat();
 
@@ -41,7 +44,7 @@ function CreateGroupModal({ showGroup, setShowGroup }) {
     setSearch('');
     setSearchResult([]);
     setHasSearched(false);
-    setSubmitLoading(false);
+    setLoading('submit', false);
     setShowGroup(false);
     clearImage();
   };
@@ -62,13 +65,13 @@ function CreateGroupModal({ showGroup, setShowGroup }) {
 
     try {
       setHasSearched(true);
-      setLoading(true);
+      setLoading('search', true);
       const users = await searchUsers(query);
       setSearchResult(users);
     } catch (error) {
       showToast(error, 'error');
     } finally {
-      setLoading(false);
+      setLoading('search', false);
     }
   };
 
@@ -96,7 +99,7 @@ function CreateGroupModal({ showGroup, setShowGroup }) {
     }
 
     try {
-      setSubmitLoading(true);
+      setLoading('submit', true);
       let groupPictureUrl = '';
       if (selectedPicture) {
         groupPictureUrl = await uploadProfileImage(selectedPicture);
@@ -115,7 +118,7 @@ function CreateGroupModal({ showGroup, setShowGroup }) {
     } catch (error) {
       showToast(error, 'error');
     } finally {
-      setSubmitLoading(false);
+      setLoading('submit', false);
     }
   };
 
@@ -185,7 +188,7 @@ function CreateGroupModal({ showGroup, setShowGroup }) {
               height: searchResult.length > 0 ? '100px' : '50px',
             }}
           >
-            {loading ? (
+            {loadingState.search ? (
               <Spinner text="Searching users..." className=" ms-5" />
             ) : (
               <ul className="list-group px-4 custom-scrollbar thin-scrollbar">
@@ -206,7 +209,7 @@ function CreateGroupModal({ showGroup, setShowGroup }) {
               </ul>
             )}
 
-            {!loading && hasSearched && !searchResult.length && (
+            {!loadingState.search && hasSearched && !searchResult.length && (
               <EmptyState message="No users found" icon="fa-solid fa-user-slash" />
             )}
           </div>
@@ -216,10 +219,12 @@ function CreateGroupModal({ showGroup, setShowGroup }) {
             <button
               className="btn-primary-custom w-100 position-relative my-3"
               onClick={handleSubmit}
-              disabled={submitLoading}
+              disabled={loadingState.submit}
             >
-              <span style={{ visibility: submitLoading ? 'hidden' : 'visible' }}>Create Chat</span>
-              {submitLoading && <Spinner size="sm" text="Creating..." />}
+              <span style={{ visibility: loadingState.submit ? 'hidden' : 'visible' }}>
+                Create Chat
+              </span>
+              {loadingState.submit && <Spinner size="sm" text="Creating..." />}
             </button>
           </div>
         </div>

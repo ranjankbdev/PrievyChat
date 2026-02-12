@@ -35,6 +35,7 @@ function ChatImage({ src, alt, className, onClick, onLoad, onError }) {
       onClick={onClick}
       onLoad={onLoad}
       onError={onError}
+      loading="lazy"
     />
   );
 }
@@ -71,29 +72,27 @@ function MessageScrollView({ messages, fileUploading }) {
       return;
     }
 
+    let blobUrl;
     try {
       showToast('Starting download...', 'info');
       const response = await fetch(fileUrl);
       if (!response.ok) throw new Error('Download failed');
 
       const blob = await response.blob();
-      const blobUrl = URL.createObjectURL(blob);
+      blobUrl = URL.createObjectURL(blob);
 
       const link = document.createElement('a');
       link.href = blobUrl;
       link.download = getSafeFileName(fileName, 'download');
       document.body.appendChild(link);
       link.click();
-
-      setTimeout(() => {
-        document.body.removeChild(link);
-        URL.revokeObjectURL(blobUrl);
-      }, 1000);
-
+      document.body.removeChild(link);
       showToast('Download completed!', 'success');
     } catch {
       showToast('Download failed. Opening in new tab...', 'warn');
       window.open(fileUrl, '_blank', 'noopener,noreferrer');
+    } finally {
+      if (blobUrl) URL.revokeObjectURL(blobUrl);
     }
   };
 

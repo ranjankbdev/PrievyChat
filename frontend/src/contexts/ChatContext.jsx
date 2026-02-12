@@ -1,9 +1,16 @@
-import { useContext, createContext, useState, useEffect } from 'react';
+import { useContext, createContext, useState, useEffect, useMemo } from 'react';
 import { useAuth } from './AuthContext.jsx';
 import { fetchNotifications } from '../services/notificationService.js';
 
 export const ChatContext = createContext();
-export const useChat = () => useContext(ChatContext);
+
+export const useChat = () => {
+  const context = useContext(ChatContext);
+  if (!context) {
+    throw new Error('useChat must be used within ChatStateProvider');
+  }
+  return context;
+};
 
 export const ChatStateProvider = ({ children }) => {
   const { currentUser } = useAuth();
@@ -27,7 +34,6 @@ export const ChatStateProvider = ({ children }) => {
         try {
           const notifications = await fetchNotifications();
           setNotification(notifications);
-          console.log(notifications);
         } catch (error) {
           console.error('Error loading notifications:', error);
         }
@@ -36,6 +42,27 @@ export const ChatStateProvider = ({ children }) => {
 
     loadNotifications();
   }, [currentUser]);
+
+  const groupedNotifications = useMemo(() => {
+    const map = {};
+
+    notification.forEach((n) => {
+      const chatId = n.chat?._id;
+      if (!chatId) return;
+
+      if (!map[chatId]) {
+        map[chatId] = {
+          chat: n.chat,
+          sender: n.sender,
+          count: 1,
+        };
+      } else {
+        map[chatId].count += 1;
+      }
+    });
+
+    return map;
+  }, [notification]);
 
   const value = {
     selectedChat,
@@ -46,6 +73,7 @@ export const ChatStateProvider = ({ children }) => {
     setNotification,
     fetchAgain,
     setFetchAgain,
+    groupedNotifications,
   };
 
   return <ChatContext.Provider value={value}>{children}</ChatContext.Provider>;

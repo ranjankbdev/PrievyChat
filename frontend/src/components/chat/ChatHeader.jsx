@@ -20,12 +20,9 @@ function ChatHeader() {
 
   const { isGroupChat } = selectedChat;
 
-  // get chat display name and user data
+  // get chat display name and user data, online status
   const { name, user, picture } = getSenderData(currentUser, selectedChat);
-
   const profilePic = picture || '/avatar.jpg';
-
-  // get online status
   const isOnline = getChatOnlineStatus(selectedChat, currentUser._id, onlineUsers);
 
   return (

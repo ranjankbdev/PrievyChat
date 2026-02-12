@@ -10,6 +10,7 @@ function ChatInput({
   handleFileSelect,
 }) {
   const [showFileMenu, setShowFileMenu] = useState(false);
+
   const menuRef = useRef(null);
   const imageInputRef = useRef(null);
   const documentInputRef = useRef(null);
@@ -38,7 +39,7 @@ function ChatInput({
       />
       <div ref={menuRef}>
         <button
-          onClick={() => setShowFileMenu(!showFileMenu)}
+          onClick={() => setShowFileMenu((prev) => !prev)}
           type="button"
           className="btn-input-custom mt-1 px-3 "
         >

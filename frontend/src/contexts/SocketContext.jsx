@@ -38,26 +38,21 @@ export const SocketProvider = ({ children }) => {
 
     // built-in connection
     newSocket.on('connect', () => {
-      console.log('Socket connected:', newSocket.id);
       setIsConnected(true); // user is connected
       newSocket.emit('setup', currentUser);
     });
 
     // custom confirmation from server
-    newSocket.on('connected', () => {
-      console.log('Socket setup completed');
-    });
+    newSocket.on('connected', () => {});
 
     // receive list of currently online users when connecting
     newSocket.on('online users', (userIds) => {
       setOnlineUsers(new Set(userIds));
-      console.log('Currently online users:', userIds);
     });
 
     // listen for user coming online
     newSocket.on('user online', (userId) => {
       setOnlineUsers((prev) => new Set([...prev, userId]));
-      console.log(`User ${userId} is now online`);
     });
 
     // listen for user going offline
@@ -67,7 +62,6 @@ export const SocketProvider = ({ children }) => {
         updated.delete(userId);
         return updated;
       });
-      console.log(`User ${userId} is now offline`);
     });
 
     // listen for typing events
@@ -85,11 +79,18 @@ export const SocketProvider = ({ children }) => {
 
     // handle disconnection
     newSocket.on('disconnect', () => {
-      console.log('Socket disconnected');
-      setIsConnected(false); // user is disconnected
+      setIsConnected(false);
     });
 
     return () => {
+      newSocket.off('connect');
+      newSocket.off('connected');
+      newSocket.off('online users');
+      newSocket.off('user online');
+      newSocket.off('user offline');
+      newSocket.off('typing');
+      newSocket.off('stop typing');
+      newSocket.off('disconnect');
       newSocket.disconnect();
     };
   }, [currentUser]);

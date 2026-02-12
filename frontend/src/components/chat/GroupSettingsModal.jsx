@@ -23,15 +23,24 @@ function GroupSettingsModal({ show, setShow, groupChat }) {
 
   const containerRef = useRef(null);
 
-  const [loading, setLoading] = useState(false);
-  const [renameLoading, setRenameLoading] = useState(false);
+  const [loadingState, setLoadingState] = useState({
+    search: false,
+    addUser: false,
+    removeUser: false,
+    rename: false,
+    picture: false,
+  });
+
   const [groupChatName, setGroupChatName] = useState('');
   const [searchResult, setSearchResult] = useState([]);
   const [search, setSearch] = useState('');
-  const [pictureLoading, setPictureLoading] = useState(false);
   const [selectedPicture, setSelectedPicture] = useState(null);
   const [previewPicture, setPreviewPicture] = useState('');
   const [hasSearched, setHasSearched] = useState(false);
+
+  const setLoading = useCallback((key, value) => {
+    setLoadingState((prev) => ({ ...prev, [key]: value }));
+  }, []);
 
   const { handleImageSelection, clearImage } = useImagePicker(
     setSelectedPicture,
@@ -39,7 +48,6 @@ function GroupSettingsModal({ show, setShow, groupChat }) {
   );
 
   const isAdmin = selectedChat?.groupAdmin?._id === currentUser._id;
-  // select which picture to show
   const displayPicture = previewPicture || selectedChat?.picture || '';
 
   // reset state when modal closes
@@ -57,24 +65,29 @@ function GroupSettingsModal({ show, setShow, groupChat }) {
   // don't render if modal hidden
   if (!show) return null;
 
+  const updateChatState = (data) => {
+    setSelectedChat(data);
+    setChats((prev) => prev.map((c) => (c._id === data._id ? data : c)));
+    setFetchAgain((prev) => !prev);
+  };
+
   // rename group chat name
   const handleRename = async () => {
     if (!groupChatName) {
       showToast('Group name cannot be empty!', 'warn');
       return;
     }
+
     try {
-      setRenameLoading(true);
+      setLoading('rename', true);
       const data = await renameGroup(selectedChat._id, groupChatName);
-      setSelectedChat(data);
-      setChats((prevChats) => prevChats.map((c) => (c._id === data._id ? data : c)));
-      setFetchAgain((prev) => !prev);
+      updateChatState(data);
       showToast('Group name updated!', 'success');
       setGroupChatName('');
     } catch (error) {
       showToast(error, 'error');
     } finally {
-      setRenameLoading(false);
+      setLoading('rename', false);
     }
   };
 
@@ -86,7 +99,7 @@ function GroupSettingsModal({ show, setShow, groupChat }) {
     }
 
     try {
-      setLoading(true);
+      setLoading('removeUser', true);
       const data = await removeUserFromGroup(selectedChat._id, removeUser._id);
       if (removeUser._id === currentUser._id) {
         // user left the group - close modal and clear selection
@@ -101,7 +114,7 @@ function GroupSettingsModal({ show, setShow, groupChat }) {
     } catch (error) {
       showToast(error, 'error');
     } finally {
-      setLoading(false);
+      setLoading('removeUser', false);
     }
   };
 
@@ -116,11 +129,9 @@ function GroupSettingsModal({ show, setShow, groupChat }) {
       return;
     }
     try {
-      setLoading(true);
+      setLoading('addUser', true);
       const data = await addUserToGroup(selectedChat._id, addUser._id);
-      setSelectedChat(data);
-      setChats((prevChats) => prevChats.map((c) => (c._id === data._id ? data : c)));
-      setFetchAgain((prev) => !prev);
+      updateChatState(data);
       showToast('User added successfully!', 'success');
       setSearchResult([]);
       setSearch('');
@@ -128,7 +139,7 @@ function GroupSettingsModal({ show, setShow, groupChat }) {
     } catch (error) {
       showToast(error, 'error');
     } finally {
-      setLoading(false);
+      setLoading('addUser', false);
     }
   };
 
@@ -143,13 +154,13 @@ function GroupSettingsModal({ show, setShow, groupChat }) {
 
     try {
       setHasSearched(true);
-      setLoading(true);
+      setLoading('search', true);
       const users = await searchUsers(query);
       setSearchResult(users);
     } catch (error) {
       showToast(error, 'error');
     } finally {
-      setLoading(false);
+      setLoading('search', false);
     }
   };
 
@@ -161,18 +172,16 @@ function GroupSettingsModal({ show, setShow, groupChat }) {
     }
 
     try {
-      setPictureLoading(true);
+      setLoading('picture', true);
       const uploadedImageUrl = await uploadProfileImage(selectedPicture);
       const data = await updateGroupPicture(selectedChat._id, uploadedImageUrl);
-      setSelectedChat(data);
-      setChats((prevChats) => prevChats.map((c) => (c._id === data._id ? data : c)));
-      setFetchAgain((prev) => !prev);
+      updateChatState(data);
       clearImage();
       showToast('Group picture updated!', 'success');
     } catch (error) {
       showToast(error, 'error');
     } finally {
-      setPictureLoading(false);
+      setLoading('picture', false);
     }
   };
 
@@ -200,7 +209,7 @@ function GroupSettingsModal({ show, setShow, groupChat }) {
               <ProfilePicUploader
                 preview={displayPicture}
                 onImageChange={handleImageSelection}
-                disabled={pictureLoading || !isAdmin}
+                disabled={loadingState.picture || !isAdmin}
                 size={130}
                 showLabel={isAdmin}
                 className="m-1"
@@ -210,10 +219,12 @@ function GroupSettingsModal({ show, setShow, groupChat }) {
                 <button
                   onClick={handlePictureUpload}
                   className="btn-primary-custom w-100 mb-2 position-relative"
-                  disabled={pictureLoading || !isAdmin}
+                  disabled={loadingState.picture || !isAdmin}
                 >
-                  <span style={{ visibility: pictureLoading ? 'hidden' : 'visible' }}>Upload</span>
-                  {pictureLoading && <Spinner size="sm" text="Uploading..." />}
+                  <span style={{ visibility: loadingState.picture ? 'hidden' : 'visible' }}>
+                    Upload
+                  </span>
+                  {loadingState.picture && <Spinner size="sm" text="Uploading..." />}
                 </button>
               )}
             </div>
@@ -241,11 +252,11 @@ function GroupSettingsModal({ show, setShow, groupChat }) {
             />
             <button
               className="btn-success-custom w-50 position-relative"
-              disabled={renameLoading || !isAdmin}
+              disabled={loadingState.rename || !isAdmin}
               onClick={handleRename}
             >
-              <span style={{ visibility: renameLoading ? 'hidden' : 'visible' }}>Update</span>
-              {renameLoading && <Spinner size="sm" text="Renaming..." />}
+              <span style={{ visibility: loadingState.rename ? 'hidden' : 'visible' }}>Update</span>
+              {loadingState.rename && <Spinner size="sm" text="Renaming..." />}
             </button>
           </div>
 
@@ -257,12 +268,14 @@ function GroupSettingsModal({ show, setShow, groupChat }) {
             onChange={(e) => handleSearch(e.target.value)}
           />
 
-          <div className={`border-bottom mb-2 border-secondary ${loading && 'mt-5 pb-4'}`}>
+          <div
+            className={`border-bottom mb-2 border-secondary ${loadingState.search && 'mt-5 pb-4'}`}
+          >
             <div
               className="list-group mb-2 position-relative"
               style={{ maxHeight: '100px', minHeight: '50px' }}
             >
-              {loading ? (
+              {loadingState.search ? (
                 <Spinner
                   text="Searching users..."
                   className="position-absolute start-50 translate-middle-x text-nowrap"
@@ -285,13 +298,16 @@ function GroupSettingsModal({ show, setShow, groupChat }) {
                   ))}
                 </ul>
               )}
-              {!loading && hasSearched && searchResult.length === 0 && search.trim() && (
-                <EmptyState
-                  variant="inline"
-                  message="no users found"
-                  icon="fa-solid fa-user-slash"
-                />
-              )}
+              {!loadingState.search &&
+                hasSearched &&
+                searchResult.length === 0 &&
+                search.trim() && (
+                  <EmptyState
+                    variant="inline"
+                    message="no users found"
+                    icon="fa-solid fa-user-slash"
+                  />
+                )}
             </div>
           </div>
 
