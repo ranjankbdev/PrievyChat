@@ -4,6 +4,7 @@ import { userRouter } from './userRoutes.js';
 import { chatRouter } from './chatRoutes.js';
 import { messageRouter } from './messageRoutes.js';
 import { notificationRouter } from './notificationRoutes.js';
+import { cloudinaryRouter } from './cloudinaryRoutes.js';
 
 const mainRouter = express.Router();
 
@@ -21,5 +22,8 @@ mainRouter.use('/messages', messageRouter);
 
 // notification routes
 mainRouter.use('/notifications', notificationRouter);
+
+// cloudnary routes
+mainRouter.use('/cloudinary', cloudinaryRouter);
 
 export { mainRouter };

@@ -1,14 +1,25 @@
 import axios from 'axios';
 import axiosInstance from '../config/axiosInstance.js';
+import { getCloudinaryConfig } from '../config/config.js';
 
 // upload profile picture to Cloudinary
 const uploadProfileImage = async (file) => {
+  // Fetch config from backend
+  const config = await getCloudinaryConfig();
+
+  if (!config || !config.cloudName || !config.uploadPreset) {
+    throw new Error('Cloudinary configuration is missing');
+  }
+
   const formData = new FormData();
   formData.append('file', file);
-  formData.append('upload_preset', 'ChatApk');
-  formData.append('cloud_name', 'dwv10qvzj');
+  formData.append('upload_preset', config.uploadPreset);
+  formData.append('cloud_name', config.cloudName);
 
-  const res = await axios.post('https://api.cloudinary.com/v1_1/dwv10qvzj/image/upload', formData);
+  const res = await axios.post(
+    `https://api.cloudinary.com/v1_1/${config.cloudName}/image/upload`,
+    formData
+  );
   return res.data.secure_url;
 };
 
