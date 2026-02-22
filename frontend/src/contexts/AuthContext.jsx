@@ -53,13 +53,17 @@ export const AuthProvider = ({ children }) => {
     }
   }, [fetchUser]);
 
+  const saveToken = useCallback((token) => {
+    localStorage.setItem('token', token);
+  }, []);
+
   // store token and fetch user immediately
   const authenticateUser = useCallback(
     async (token) => {
-      localStorage.setItem('token', token);
+      saveToken(token);
       await fetchUser(token);
     },
-    [fetchUser]
+    [fetchUser, saveToken]
   );
 
   // update user profile locally without refetching
@@ -73,7 +77,7 @@ export const AuthProvider = ({ children }) => {
     navigate('/');
   }, [navigate]);
 
-  const value = { currentUser, authenticateUser, updateUserProfile, handleLogout };
+  const value = { currentUser, authenticateUser, updateUserProfile, handleLogout, saveToken };
 
   return (
     <AuthContext.Provider value={value}>

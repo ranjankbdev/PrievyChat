@@ -1,6 +1,6 @@
 import axiosInstance from '../config/axiosInstance.js';
 import axios from 'axios';
-import { getCloudinaryConfig } from '../config/config.js';
+import { getCloudinarySignature } from '../config/config.js';
 
 export const fetchChatMessages = async (chatId) => {
   const { data } = await axiosInstance.get(`/messages/chat/${chatId}`);
@@ -40,23 +40,21 @@ export const sendMessage = async (
 // Upload file (image or document) to Cloudinary
 export const uploadFile = async (file) => {
   // Fetch config from backend
-  const config = await getCloudinaryConfig();
+  const { cloudName, apiKey, timestamp, signature } = await getCloudinarySignature();
 
-  if (!config || !config.cloudName || !config.uploadPreset) {
-    throw new Error('Cloudinary configuration is missing');
-  }
   const formData = new FormData();
   formData.append('file', file);
-  formData.append('upload_preset', config.uploadPreset);
-  formData.append('cloud_name', config.cloudName);
+  formData.append('api_key', apiKey);
+  formData.append('timestamp', timestamp);
+  formData.append('signature', signature);
 
   // Determine if it's an image or other file type
   const isImage = file.type.startsWith('image/');
 
   // Use different upload endpoints based on file type
   const uploadUrl = isImage
-    ? `https://api.cloudinary.com/v1_1/${config.cloudName}/image/upload`
-    : `https://api.cloudinary.com/v1_1/${config.cloudName}/raw/upload`;
+    ? `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`
+    : `https://api.cloudinary.com/v1_1/${cloudName}/raw/upload`;
 
   const res = await axios.post(uploadUrl, formData);
   return res.data.secure_url;

@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import showToast from '../../utils/toastHelper.js';
 import { useAuth } from '../../contexts/AuthContext.jsx';
 import { signupUser } from '../../services/authService.js';
-import { uploadProfileImage } from '../../services/userService.js';
+import { uploadProfileImage, updateUserProfileAPI } from '../../services/userService.js';
 import useImagePicker from '../../hooks/useImagePicker.js';
 import ProfilePicUploader from '../../components/common/ProfilePicUploader.jsx';
 import Spinner from '../../components/common/Spinner.jsx';
@@ -16,7 +16,7 @@ function ProfileSetup() {
   const [picture, setPicture] = useState(null);
   const [preview, setPreview] = useState('');
 
-  const { authenticateUser } = useAuth();
+  const { authenticateUser, saveToken } = useAuth();
   const navigate = useNavigate();
 
   // useeffect for restoring the email and password
@@ -34,6 +34,7 @@ function ProfileSetup() {
 
   // save the user details / signup
   const handleSave = async () => {
+    if (loading) return;
     if (!email || !password) {
       showToast('Please complete signup before setting up your profile.', 'error');
       return;
@@ -45,23 +46,33 @@ function ProfileSetup() {
       return;
     }
 
+    if (picture instanceof File && picture.size > 1024 * 1024) {
+      showToast('File size must not exceed 1MB', 'error');
+      return;
+    }
+
     try {
       setLoading(true);
-      let uploadedImageUrl = '';
-
-      // upload image ONLY if file selected
-      if (picture instanceof File) {
-        uploadedImageUrl = await uploadProfileImage(picture);
-      }
       const data = await signupUser({
         name: trimmedName,
         email,
         password,
-        picture: uploadedImageUrl,
+        picture: '',
       });
+      saveToken(data.token);
+
+      let uploadedImageUrl = '';
+      // upload image ONLY if file selected
+      if (picture instanceof File) {
+        uploadedImageUrl = await uploadProfileImage(picture);
+      }
+
+      if (uploadedImageUrl) {
+        await updateUserProfileAPI({ picture: uploadedImageUrl });
+      }
+      await authenticateUser(data.token);
       showToast('Account created successfully!', 'success');
       localStorage.removeItem('tempSignupData');
-      authenticateUser(data.token);
 
       // Clear state
       setEmail('');
@@ -90,7 +101,7 @@ function ProfileSetup() {
           <div className="d-flex align-items-center mb-3 position-relative border-bottom border-secondary pb-3">
             {/* back button */}
             <button
-              className="btn px-2 py-1 position-absolute pt-2 profile-back-hover text-light-gray"
+              className="btn px-2 py-1 position-absolute pt-2 close-btn-hover"
               onClick={handleBack}
             >
               <i className="fa-solid fa-arrow-left fs-4"></i>

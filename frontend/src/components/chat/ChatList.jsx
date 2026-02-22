@@ -59,11 +59,13 @@ function ChatList() {
             <FadeLoader color="white" loading={true} size={150} />
           </div>
         ) : chats.length === 0 ? (
-          <EmptyState
-            variant="centered"
-            message="Search a user to start the chat"
-            icon="fa-solid fa-magnifying-glass"
-          />
+          <div style={{ height: '75vh' }}>
+            <EmptyState
+              variant="centered"
+              message="Search a user to start the chat"
+              icon="fa-solid fa-magnifying-glass"
+            />
+          </div>
         ) : (
           <div className="custom-scrollbar px-2 py-1 chat-list no-scrollbar">
             {chats.map((chat) => {

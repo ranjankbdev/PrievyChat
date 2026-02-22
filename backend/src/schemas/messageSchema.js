@@ -18,9 +18,15 @@ const createMessageSchema = Joi.object({
     messageType: Joi.string().valid('text', 'image', 'document').optional(),
     fileUrl: Joi.string().uri().allow('', null).optional(),
     fileName: Joi.string().allow('', null).optional(),
-    fileSize: Joi.number().integer().positive().max(500000).allow(null).optional().messages({
-      'number.max': 'File size must not exceed 500KB',
-    }),
+    fileSize: Joi.number()
+      .integer()
+      .positive()
+      .max(1024 * 1024)
+      .allow(null)
+      .optional()
+      .messages({
+        'number.max': 'File size must not exceed 1Mb',
+      }),
   })
     .required()
     .custom((value, helpers) => {

@@ -1,23 +1,19 @@
 import axios from 'axios';
 import axiosInstance from '../config/axiosInstance.js';
-import { getCloudinaryConfig } from '../config/config.js';
+import { getCloudinarySignature } from '../config/config.js';
 
 // upload profile picture to Cloudinary
 const uploadProfileImage = async (file) => {
   // Fetch config from backend
-  const config = await getCloudinaryConfig();
-
-  if (!config || !config.cloudName || !config.uploadPreset) {
-    throw new Error('Cloudinary configuration is missing');
-  }
-
+  const { cloudName, apiKey, timestamp, signature } = await getCloudinarySignature();
   const formData = new FormData();
   formData.append('file', file);
-  formData.append('upload_preset', config.uploadPreset);
-  formData.append('cloud_name', config.cloudName);
+  formData.append('api_key', apiKey);
+  formData.append('timestamp', timestamp);
+  formData.append('signature', signature);
 
   const res = await axios.post(
-    `https://api.cloudinary.com/v1_1/${config.cloudName}/image/upload`,
+    `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
     formData
   );
   return res.data.secure_url;

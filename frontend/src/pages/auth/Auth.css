@@ -60,13 +60,3 @@ select:-webkit-autofill {
   transform: scale(1.05);
 }
 
-/* back button */
-.profile-back-hover {
-  transition: all 0.2s ease;
-  border-radius: 8px;
-}
-
-.profile-back-hover:hover {
-  background-color: rgba(56, 178, 172, 0.5);
-  transform: translateX(-2px);
-}

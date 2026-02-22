@@ -180,9 +180,9 @@ function ChatContainer() {
     if (!file) return;
 
     // Validate file size
-    if (file.size === 0 || file.size > 500000) {
+    if (file.size === 0 || file.size > 1024 * 1024) {
       showToast(
-        file.size === 0 ? 'Cannot upload empty file' : 'File size must not exceed 500KB',
+        file.size === 0 ? 'Cannot upload empty file' : 'File size must not exceed 1MB',
         'error'
       );
       e.target.value = '';
