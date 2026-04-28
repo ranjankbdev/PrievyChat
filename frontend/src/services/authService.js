@@ -12,4 +12,10 @@ const loginUser = async (email, password) => {
   return data;
 };
 
-export { signupUser, loginUser };
+// Logout
+const logoutUser = async () => {
+  const { data } = await axiosInstance.post('/auth/logout');
+  return data;
+};
+
+export { signupUser, loginUser, logoutUser };

@@ -30,7 +30,7 @@ export const ChatStateProvider = ({ children }) => {
   // fetch notifications from backend when user logs in
   useEffect(() => {
     const loadNotifications = async () => {
-      if (currentUser?.token) {
+      if (currentUser) {
         try {
           const notifications = await fetchNotifications();
           setNotification(notifications);

@@ -1,5 +1,6 @@
 import express from 'express';
 import cors from 'cors';
+import cookieParser from 'cookie-parser';
 import { StatusCodes } from 'http-status-codes';
 import { ExpressError } from './utils/ExpressError.js';
 import { mainRouter } from './routes/mainRoutes.js';
@@ -7,9 +8,15 @@ import { mainRouter } from './routes/mainRoutes.js';
 const app = express();
 
 // enable CORS so frontend can communicate with backend
-app.use(cors());
+app.use(
+  cors({
+    origin: 'http://localhost:5173',
+    credentials: true,
+  })
+);
 
 // middleware to parse JSON request bodies
+app.use(cookieParser());
 app.use(express.json({ limit: '100kb' }));
 
 // routes

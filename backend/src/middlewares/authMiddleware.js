@@ -4,11 +4,10 @@ import { ExpressError } from '../utils/ExpressError.js';
 import Config from '../config/index.js';
 
 const verifyToken = async (req, res, next) => {
-  const authHeader = req.headers.authorization;
-  if (!authHeader?.startsWith('Bearer ')) {
+  const token = req.cookies?.token;
+  if (!token) {
     return next(new ExpressError(StatusCodes.UNAUTHORIZED, 'No token provided'));
   }
-  const token = authHeader.split(' ')[1];
   try {
     const decode = jwt.verify(token, Config.secretKey);
     req.user = decode;

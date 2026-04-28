@@ -5,14 +5,9 @@ const SOCKET_URL = BASE_URL;
 
 // Fetch Cloudinary config from backend
 const getCloudinarySignature = async () => {
-  const token = localStorage.getItem('token');
-  if (!token) {
-    throw new Error('Authentication required to upload files');
-  }
-
   const response = await fetch(`${API_URL}/cloudinary/signature`, {
     method: 'POST',
-    headers: { Authorization: `Bearer ${token}` },
+    credentials: 'include',
   });
 
   if (!response.ok) {

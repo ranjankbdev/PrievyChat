@@ -16,7 +16,7 @@ function ProfileSetup() {
   const [picture, setPicture] = useState(null);
   const [preview, setPreview] = useState('');
 
-  const { authenticateUser, saveToken } = useAuth();
+  const { authenticateUser } = useAuth();
   const navigate = useNavigate();
 
   // useeffect for restoring the email and password
@@ -53,13 +53,9 @@ function ProfileSetup() {
 
     try {
       setLoading(true);
-      const data = await signupUser({
-        name: trimmedName,
-        email,
-        password,
-        picture: '',
-      });
-      saveToken(data.token);
+      await signupUser({ name: trimmedName, email, password, picture: '' });
+
+      await authenticateUser();
 
       let uploadedImageUrl = '';
       // upload image ONLY if file selected
@@ -70,7 +66,7 @@ function ProfileSetup() {
       if (uploadedImageUrl) {
         await updateUserProfileAPI({ picture: uploadedImageUrl });
       }
-      await authenticateUser(data.token);
+
       showToast('Account created successfully!', 'success');
       localStorage.removeItem('tempSignupData');
 

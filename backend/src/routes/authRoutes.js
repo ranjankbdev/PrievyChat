@@ -1,15 +1,18 @@
 import express from 'express';
 import { wrapAsync } from '../utils/wrapAsync.js';
-import { signup, login } from '../controllers/authController.js';
+import { signup, login, logout } from '../controllers/authController.js';
 import { validateSchema } from '../middlewares/validateSchema.js';
 import { signupSchema, loginSchema } from '../schemas/authSchema.js';
 
 const authRouter = express.Router();
 
-// signup route
+// signup
 authRouter.post('/signup', validateSchema(signupSchema), wrapAsync(signup));
 
-// login route
+// login
 authRouter.post('/login', validateSchema(loginSchema), wrapAsync(login));
+
+// logout
+authRouter.post('/logout', wrapAsync(logout));
 
 export { authRouter };

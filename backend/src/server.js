@@ -1,5 +1,6 @@
 import app from './app.js';
 import mongoose from 'mongoose';
+import cors from 'cors';
 import http from 'http';
 import Config from './config/index.js';
 import { Server } from 'socket.io';
@@ -10,7 +11,10 @@ const server = http.createServer(app);
 
 const io = new Server(server, {
   pingTimeout: 60000,
-  cors: { origin: 'http://localhost:5173' },
+  cors: {
+    origin: 'http://localhost:5173',
+    credentials: true,
+  },
 });
 
 // Connect socket logic

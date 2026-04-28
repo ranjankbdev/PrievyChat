@@ -1,6 +1,7 @@
 import { createContext, useState, useEffect, useContext, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FadeLoader } from 'react-spinners';
+import { logoutUser } from '../services/authService.js';
 import axiosInstance from '../config/axiosInstance.js';
 import showToast from '../utils/toastHelper.js';
 
@@ -23,61 +24,46 @@ export const AuthProvider = ({ children }) => {
 
   const navigate = useNavigate();
 
-  // fetch user data with token
-  const fetchUser = useCallback(
-    async (token) => {
-      try {
-        setIsUserLoading(true);
-        const res = await axiosInstance.get('/users/me');
-        setCurrentUser({ ...res.data, token });
-      } catch (err) {
-        console.error('Error fetching user data:', err);
-        showToast('Session expired. Please login again.', 'error');
-        localStorage.removeItem('token');
-        setCurrentUser(null);
-        navigate('/');
-      } finally {
-        setIsUserLoading(false);
-      }
-    },
-    [navigate]
-  );
-
-  // run on mount to fetch user if token exists
-  useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      fetchUser(token);
-    } else {
+  // fetch user data
+  const fetchUser = useCallback(async () => {
+    try {
+      setIsUserLoading(true);
+      const res = await axiosInstance.get('/users/me');
+      setCurrentUser({ ...res.data });
+    } catch (err) {
+      setCurrentUser(null);
+    } finally {
       setIsUserLoading(false);
     }
-  }, [fetchUser]);
-
-  const saveToken = useCallback((token) => {
-    localStorage.setItem('token', token);
   }, []);
 
+  // fetch user
+  useEffect(() => {
+    fetchUser();
+  }, [fetchUser]);
+
   // store token and fetch user immediately
-  const authenticateUser = useCallback(
-    async (token) => {
-      saveToken(token);
-      await fetchUser(token);
-    },
-    [fetchUser, saveToken]
-  );
+  const authenticateUser = useCallback(async () => {
+    await fetchUser();
+  }, [fetchUser]);
 
   // update user profile locally without refetching
   const updateUserProfile = useCallback((updatedData) => {
     setCurrentUser((prev) => ({ ...prev, ...updatedData }));
   }, []);
 
-  const handleLogout = useCallback(() => {
-    localStorage.removeItem('token');
-    setCurrentUser(null);
-    navigate('/');
+  const handleLogout = useCallback(async () => {
+    try {
+      await logoutUser();
+      setCurrentUser(null);
+      showToast('User logged out successfully!', 'success');
+      navigate('/');
+    } catch (err) {
+      showToast('Logout failed!', 'error');
+    }
   }, [navigate]);
 
-  const value = { currentUser, authenticateUser, updateUserProfile, handleLogout, saveToken };
+  const value = { currentUser, authenticateUser, updateUserProfile, handleLogout };
 
   return (
     <AuthContext.Provider value={value}>

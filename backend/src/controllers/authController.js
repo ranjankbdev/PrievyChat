@@ -3,6 +3,13 @@ import { User } from '../models/userModel.js';
 import { ExpressError } from '../utils/ExpressError.js';
 import { hashPassword, genToken, comparePassword } from '../utils/authHelper.js';
 
+const cookieOptions = {
+  httpOnly: true,
+  secure: false,
+  sameSite: 'strict',
+  maxAge: 3 * 24 * 60 * 60 * 1000,
+};
+
 const signup = async (req, res) => {
   const { name, email, password, picture } = req.body;
 
@@ -25,7 +32,8 @@ const signup = async (req, res) => {
   const savedUser = await newUser.save();
   const token = genToken(savedUser._id);
 
-  res.status(StatusCodes.CREATED).json({ message: 'User created successfully!', token });
+  res.cookie('token', token, cookieOptions);
+  res.status(StatusCodes.CREATED).json();
 };
 
 const login = async (req, res) => {
@@ -44,8 +52,14 @@ const login = async (req, res) => {
   }
 
   const token = genToken(user._id);
+  res.cookie('token', token, cookieOptions);
 
-  res.status(StatusCodes.OK).json({ message: 'Login successfull!', token });
+  res.status(StatusCodes.OK).json();
 };
 
-export { signup, login };
+const logout = (req, res) => {
+  res.clearCookie('token');
+  res.status(StatusCodes.OK).json();
+};
+
+export { signup, login, logout };
