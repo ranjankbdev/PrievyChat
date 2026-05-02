@@ -4,7 +4,7 @@ if (process.env.NODE_ENV !== 'production') {
   dotenv.config();
 }
 
-const requiredEnv = ['MONGODB_URI', 'JWT_SECRET_KEY'];
+const requiredEnv = ['MONGODB_URI', 'JWT_SECRET_KEY', 'EMAIL', 'EMAIL_PASSWORD'];
 
 requiredEnv.forEach((key) => {
   if (!process.env[key]) {
@@ -16,6 +16,8 @@ const Config = {
   mongoUri: process.env.MONGODB_URI,
   secretKey: process.env.JWT_SECRET_KEY,
   port: process.env.PORT || 8080,
+  email: process.env.EMAIL,
+  emailPassword: process.env.EMAIL_PASSWORD,
 };
 
 export default Config;

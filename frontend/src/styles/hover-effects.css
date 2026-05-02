@@ -3,7 +3,10 @@
   opacity: 0.8;
   border-radius: 6px;
   filter: invert(100%);
-  transition: background-color 0.2s ease, transform 0.2s ease, opacity 0.2s ease;
+  transition:
+    background-color 0.2s ease,
+    transform 0.2s ease,
+    opacity 0.2s ease;
 }
 
 .close-btn-hover:hover {
@@ -30,5 +33,10 @@
 
 .search-list:hover {
   background: rgba(16, 241, 230, 0.2) !important;
+  transform: translateX(4px);
+}
+
+.forgot-password-btn:hover {
+  color: rgb(234, 224, 224) !important;
   transform: translateX(4px);
 }

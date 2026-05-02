@@ -104,7 +104,7 @@ const Signup = () => {
               onClick={() => setShowPassword(!showPassword)}
               type="button"
               style={{ width: '68px' }}
-              className="btn border-start-0 show-password-hover"
+              className="btn border-start-0 show-password-hover text-white"
             >
               {showPassword ? 'Hide' : 'Show'}
             </button>
@@ -130,7 +130,7 @@ const Signup = () => {
               onClick={() => setShowConfirmPassword(!showConfirmPassword)}
               style={{ width: '68px' }}
               type="button"
-              className="btn show-password-hover border-start-0"
+              className="btn show-password-hover border-start-0 text-white"
             >
               {showConfirmPassword ? 'Hide' : 'Show'}
             </button>

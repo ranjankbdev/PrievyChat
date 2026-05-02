@@ -18,4 +18,29 @@ const logoutUser = async () => {
   return data;
 };
 
-export { signupUser, loginUser, logoutUser };
+// Send otp
+const sendPasswordResetOtpAPI = async (payload) => {
+  const { data } = await axiosInstance.post('/auth/password-reset/otp', payload);
+  return data;
+};
+
+// Verify OTP
+const verifyPasswordResetOtpAPI = async (payload) => {
+  const { data } = await axiosInstance.post('/auth/password-reset/verify', payload);
+  return data;
+};
+
+// Reset password
+const resetUserPasswordAPI = async (payload) => {
+  const { data } = await axiosInstance.post('/auth/password-reset', payload);
+  return data;
+};
+
+export {
+  signupUser,
+  loginUser,
+  logoutUser,
+  sendPasswordResetOtpAPI,
+  verifyPasswordResetOtpAPI,
+  resetUserPasswordAPI,
+};

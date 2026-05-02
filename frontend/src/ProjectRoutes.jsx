@@ -4,6 +4,7 @@ import ChatPage from './pages/ChatPage.jsx';
 import ProfileSetup from './pages/auth/ProfileSetup.jsx';
 import { useAuth } from './contexts/AuthContext.jsx';
 import NotFoundPage from './pages/NotFoundPage.jsx';
+import ForgotPassword from './pages/auth/ForgotPassword.jsx';
 
 function ProjectRoutes() {
   const { currentUser } = useAuth();
@@ -13,6 +14,11 @@ function ProjectRoutes() {
     {
       path: '/',
       element: !currentUser ? <AuthPage /> : <Navigate to="/chats" replace />,
+    },
+    // forgot-password
+    {
+      path: '/forgot-password',
+      element: !currentUser ? <ForgotPassword /> : <Navigate to="/chats" replace />,
     },
     // profile setup page route
     {

@@ -61,11 +61,11 @@ const Login = () => {
           />
         </div>
 
-        <div className="mb-3">
+        <div className="mb-2">
           <label htmlFor="password" className="form-label text-white">
             Password <span className="text-danger">*</span>
           </label>
-          <div className="input-group mb-4">
+          <div className="input-group">
             <input
               autoComplete="new-password"
               className="form-control"
@@ -84,6 +84,12 @@ const Login = () => {
               {showPassword ? 'Hide' : 'Show'}
             </button>
           </div>
+        </div>
+
+        <div className="text-end mb-4">
+          <span onClick={() => navigate('/forgot-password')} className="text-white-50 small forgot-password-btn cursor-pointer">
+            Forgot Password ?
+          </span>
         </div>
 
         <button disabled={loading} className="btn-primary-custom mb-4 w-100 position-relative">
