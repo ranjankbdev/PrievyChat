@@ -1,5 +1,5 @@
 import Joi from 'joi';
-import { nameField, emailField, passwordField } from './baseSchema.js';
+import { nameField, emailField, passwordField, otpField } from './baseSchema.js';
 
 const signupSchema = Joi.object({
   body: Joi.object({
@@ -17,4 +17,30 @@ const loginSchema = Joi.object({
   }).required(),
 });
 
-export { signupSchema, loginSchema };
+const sendPasswordResetOtpSchema = Joi.object({
+  body: Joi.object({
+    email: emailField.required(),
+  }).required(),
+});
+
+const verifyPasswordResetOtpSchema = Joi.object({
+  body: Joi.object({
+    email: emailField.required(),
+    otp: otpField.required(),
+  }).required(),
+});
+
+const resetUserPasswordSchema = Joi.object({
+  body: Joi.object({
+    email: emailField.required(),
+    newPassword: passwordField.required(),
+  }).required(),
+});
+
+export {
+  signupSchema,
+  loginSchema,
+  sendPasswordResetOtpSchema,
+  verifyPasswordResetOtpSchema,
+  resetUserPasswordSchema,
+};

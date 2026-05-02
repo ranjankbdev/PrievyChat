@@ -28,4 +28,13 @@ const chatIdField = idField.required().messages({
   'any.required': 'chatId is required',
 });
 
-export { nameField, emailField, passwordField, idField, chatIdField };
+const otpField = Joi.string()
+  .trim()
+  .pattern(/^[0-9]{6}$/)
+  .required()
+  .messages({
+    'string.empty': 'Please enter you OTP',
+    'string.pattern.base': 'OTP must be exactly 6 digits',
+  });
+
+export { nameField, emailField, passwordField, idField, chatIdField, otpField };
