@@ -33,7 +33,7 @@ export const SocketProvider = ({ children }) => {
   useEffect(() => {
     if (!currentUser) return;
 
-    const newSocket = io(ENDPOINT);
+    const newSocket = io(ENDPOINT, { withCredentials: true });
     setSocket(newSocket);
 
     // built-in connection
@@ -41,9 +41,6 @@ export const SocketProvider = ({ children }) => {
       setIsConnected(true); // user is connected
       newSocket.emit('setup', currentUser);
     });
-
-    // custom confirmation from server
-    newSocket.on('connected', () => {});
 
     // receive list of currently online users when connecting
     newSocket.on('online users', (userIds) => {
@@ -84,7 +81,6 @@ export const SocketProvider = ({ children }) => {
 
     return () => {
       newSocket.off('connect');
-      newSocket.off('connected');
       newSocket.off('online users');
       newSocket.off('user online');
       newSocket.off('user offline');

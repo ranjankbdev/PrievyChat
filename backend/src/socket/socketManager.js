@@ -1,6 +1,23 @@
+import jwt from 'jsonwebtoken';
+import Config from '../config/index.js';
+
 const onlineUsers = new Map(); // userId -> socketId
 
 const connectToSocket = (io) => {
+  io.use((socket, next) => {
+    try {
+      const token = socket.handshake.headers?.cookie?.split('token=')[1];
+      if (!token) return next(new Error('Unauthorized'));
+
+      const decoded = jwt.verify(token.split(';')[0], Config.secretKey);
+      socket.userId = decoded.id;
+      console.log('Socket auth success, userId:', socket.userId);
+      next();
+    } catch {
+      next(new Error('Unauthorized'));
+    }
+  });
+
   io.on('connection', (socket) => {
     console.log('Connected to socket.io', socket.id);
 
@@ -17,9 +34,6 @@ const connectToSocket = (io) => {
 
       // broadcast to all OTHER users that this user is online
       socket.broadcast.emit('user online', userData._id);
-
-      socket.emit('connected');
-      console.log(`User ${userData._id} is online`);
     });
 
     // join a chat room
