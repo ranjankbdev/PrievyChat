@@ -7,11 +7,11 @@ if (process.env.NODE_ENV !== 'production') {
 const requiredEnv = [
   'MONGODB_URI',
   'JWT_SECRET_KEY',
-  'EMAIL',
-  'EMAIL_PASSWORD',
   'CLOUD_NAME',
   'CLOUD_API_KEY',
   'CLOUD_API_SECRET',
+  'BREVO_API_KEY',
+  'BREVO_SENDER_EMAIL',
 ];
 
 requiredEnv.forEach((key) => {
@@ -24,11 +24,11 @@ const Config = {
   mongoUri: process.env.MONGODB_URI,
   secretKey: process.env.JWT_SECRET_KEY,
   port: process.env.PORT || 8080,
-  email: process.env.EMAIL,
-  emailPassword: process.env.EMAIL_PASSWORD,
   cloudName: process.env.CLOUD_NAME,
   cloudApiKey: process.env.CLOUD_API_KEY,
   cloudApiSecret: process.env.CLOUD_API_SECRET,
+  brevoApiKey: process.env.BREVO_API_KEY,
+  brevoSenderEmail: process.env.BREVO_SENDER_EMAIL,
 };
 
 export default Config;
