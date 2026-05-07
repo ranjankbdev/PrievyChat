@@ -5,10 +5,10 @@ import { getCloudinarySignature } from '../config/config.js';
 // upload profile picture to Cloudinary
 const uploadProfileImage = async (file) => {
   // Fetch config from backend
-  const { cloudName, apiKey, timestamp, signature } = await getCloudinarySignature();
+  const { cloudName, cloudApiKey, timestamp, signature } = await getCloudinarySignature();
   const formData = new FormData();
   formData.append('file', file);
-  formData.append('api_key', apiKey);
+  formData.append('api_key', cloudApiKey);
   formData.append('timestamp', timestamp);
   formData.append('signature', signature);
 
