@@ -56,7 +56,12 @@ function NavigationBar() {
           <span className="mx-3 me-4 d-none d-sm-inline">Start a new chat</span>
         </div>
 
-        <div className="text-center mx-2 mt-2">
+        <div className="text-center mx-2 mt-2 d-flex gap-2">
+          <img
+            className="text-center d-flex"
+            src="/prievychat_logo.png"
+            style={{ width: 40, height: 40 }}
+          ></img>
           <h3>Prievy-Chat</h3>
         </div>
 
