@@ -29,10 +29,9 @@ const Login = () => {
 
     try {
       setLoading(true);
-      await loginUser(email, password);
+      const data = await loginUser(email, password);
       showToast('Login successful!', 'success');
-      await authenticateUser();
-      navigate('/chats');
+      authenticateUser(data);
       setEmail('');
       setPassword('');
     } catch (error) {

@@ -53,9 +53,9 @@ function ProfileSetup() {
 
     try {
       setLoading(true);
-      await signupUser({ name: trimmedName, email, password, picture: '' });
+      const data = await signupUser({ name: trimmedName, email, password, picture: '' });
 
-      await authenticateUser();
+      authenticateUser(data);
 
       let uploadedImageUrl = '';
       // upload image ONLY if file selected
@@ -76,7 +76,6 @@ function ProfileSetup() {
       setUsername('');
       clearImage();
 
-      navigate('/chats');
     } catch (error) {
       showToast(error, 'error');
     } finally {

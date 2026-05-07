@@ -43,9 +43,9 @@ export const AuthProvider = ({ children }) => {
   }, [fetchUser]);
 
   // store token and fetch user immediately
-  const authenticateUser = useCallback(async () => {
-    await fetchUser();
-  }, [fetchUser]);
+  const authenticateUser = useCallback((userData) => {
+    setCurrentUser(userData);
+  }, []);
 
   // update user profile locally without refetching
   const updateUserProfile = useCallback((updatedData) => {

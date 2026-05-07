@@ -37,7 +37,12 @@ const signup = async (req, res) => {
   const token = genToken(savedUser._id);
 
   res.cookie('token', token, cookieOptions);
-  res.status(StatusCodes.CREATED).json();
+  res.status(StatusCodes.CREATED).json({
+    _id: savedUser._id,
+    name: savedUser.name,
+    email: savedUser.email,
+    picture: savedUser.picture,
+  });
 };
 
 // login
@@ -59,7 +64,12 @@ const login = async (req, res) => {
   const token = genToken(user._id);
   res.cookie('token', token, cookieOptions);
 
-  res.status(StatusCodes.OK).json();
+  res.status(StatusCodes.OK).json({
+    _id: user._id,
+    name: user.name,
+    email: user.email,
+    picture: user.picture,
+  });
 };
 
 // logout
