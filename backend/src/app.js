@@ -4,13 +4,14 @@ import cookieParser from 'cookie-parser';
 import { StatusCodes } from 'http-status-codes';
 import { ExpressError } from './utils/ExpressError.js';
 import { mainRouter } from './routes/mainRoutes.js';
+import Config from './config/index.js';
 
 const app = express();
 
 // enable CORS so frontend can communicate with backend
 app.use(
   cors({
-    origin: 'http://localhost:5173',
+    origin: Config.frontendUrl,
     credentials: true,
   })
 );
@@ -29,7 +30,6 @@ app.use((req, res, next) => {
 
 // global error handler
 app.use((err, req, res, next) => {
-  console.log('Error : ', err);
   let statusCode = err.statusCode || StatusCodes.INTERNAL_SERVER_ERROR;
   let message = err.message || 'Something went wrong!';
 

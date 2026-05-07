@@ -12,6 +12,7 @@ const requiredEnv = [
   'CLOUD_API_SECRET',
   'BREVO_API_KEY',
   'BREVO_SENDER_EMAIL',
+  'FRONTEND_URL',
 ];
 
 requiredEnv.forEach((key) => {
@@ -29,6 +30,8 @@ const Config = {
   cloudApiSecret: process.env.CLOUD_API_SECRET,
   brevoApiKey: process.env.BREVO_API_KEY,
   brevoSenderEmail: process.env.BREVO_SENDER_EMAIL,
+  frontendUrl: process.env.FRONTEND_URL,
+  nodeEnv: process.env.NODE_ENV,
 };
 
 export default Config;

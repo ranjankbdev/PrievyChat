@@ -4,12 +4,13 @@ import { User } from '../models/userModel.js';
 import { ExpressError } from '../utils/ExpressError.js';
 import { hashValue, genToken, compareHash } from '../utils/authHelper.js';
 import { sendOtpEmail } from '../utils/emailService.js';
+import Config from '../config/index.js';
 
 const cookieOptions = {
   httpOnly: true,
-  secure: false,
-  sameSite: 'strict',
   maxAge: 3 * 24 * 60 * 60 * 1000,
+  secure: Config.nodeEnv === 'production',
+  sameSite: Config.nodeEnv === 'production' ? 'none' : 'lax',
 };
 
 // signup
@@ -62,9 +63,13 @@ const login = async (req, res) => {
 };
 
 // logout
-const logout = (req, res) => {
-  res.clearCookie('token');
-  res.status(StatusCodes.OK).json();
+const logout = async (req, res) => {
+  res.clearCookie('token', {
+    httpOnly: true,
+    secure: Config.nodeEnv === 'production',
+    sameSite: Config.nodeEnv === 'production' ? 'none' : 'lax',
+  });
+  return res.status(StatusCodes.OK).json();
 };
 
 // otp for reset password
