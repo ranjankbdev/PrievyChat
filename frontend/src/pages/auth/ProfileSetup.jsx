@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import showToast from '../../utils/toastHelper.js';
 import { useAuth } from '../../contexts/AuthContext.jsx';
@@ -15,6 +15,8 @@ function ProfileSetup() {
   const [loading, setLoading] = useState(false);
   const [picture, setPicture] = useState(null);
   const [preview, setPreview] = useState('');
+
+  const signupDataRef = useRef(null);
 
   const { authenticateUser } = useAuth();
   const navigate = useNavigate();
@@ -53,10 +55,13 @@ function ProfileSetup() {
 
     try {
       setLoading(true);
-      const data = await signupUser({ name: trimmedName, email, password, picture: '' });
-
-      authenticateUser(data);
-
+      let data;
+      if (!signupDataRef.current) {
+        data = await signupUser({ name: trimmedName, email, password, picture: '' });
+        signupDataRef.current = data;
+      } else {
+        data = signupDataRef.current;
+      }
       let uploadedImageUrl = '';
       // upload image ONLY if file selected
       if (picture instanceof File) {
@@ -65,7 +70,9 @@ function ProfileSetup() {
 
       if (uploadedImageUrl) {
         await updateUserProfileAPI({ picture: uploadedImageUrl });
+        data.picture = uploadedImageUrl;
       }
+      authenticateUser(data);
 
       showToast('Account created successfully!', 'success');
       localStorage.removeItem('tempSignupData');
@@ -75,7 +82,6 @@ function ProfileSetup() {
       setPassword('');
       setUsername('');
       clearImage();
-
     } catch (error) {
       showToast(error, 'error');
     } finally {
