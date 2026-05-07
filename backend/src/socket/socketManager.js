@@ -5,16 +5,15 @@ const onlineUsers = new Map(); // userId -> socketId
 
 const connectToSocket = (io) => {
   io.use((socket, next) => {
-    try {
-      const token = socket.handshake.headers?.cookie?.split('token=')[1];
-      if (!token) return next(new Error('Unauthorized'));
+    const token = socket.handshake.auth?.token;
+    if (!token) return next(new Error('No token'));
 
-      const decoded = jwt.verify(token.split(';')[0], Config.secretKey);
-      socket.userId = decoded.id;
-      console.log('Socket auth success, userId:', socket.userId);
+    try {
+      const decoded = jwt.verify(token, Config.secretKey);
+      socket.user = decoded;
       next();
     } catch {
-      next(new Error('Unauthorized'));
+      next(new Error('Invalid token'));
     }
   });
 

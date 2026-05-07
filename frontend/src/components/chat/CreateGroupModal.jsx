@@ -191,7 +191,7 @@ function CreateGroupModal({ showGroup, setShowGroup }) {
             {loadingState.search ? (
               <Spinner text="Searching users..." className=" ms-5" />
             ) : (
-              <ul className="list-group px-4 custom-scrollbar thin-scrollbar">
+              <ul className="list-group pe-1 custom-scrollbar thin-scrollbar">
                 {searchResult.map((user) => (
                   <li key={user._id} className="list-group-item bg-transparent border-0 p-0 pt-1">
                     <div

@@ -33,7 +33,9 @@ export const SocketProvider = ({ children }) => {
   useEffect(() => {
     if (!currentUser) return;
 
-    const newSocket = io(ENDPOINT, { withCredentials: true });
+    const newSocket = io(ENDPOINT, {
+      auth: { token: localStorage.getItem('token') },
+    });
     setSocket(newSocket);
 
     // built-in connection

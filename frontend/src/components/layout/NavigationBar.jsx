@@ -58,11 +58,11 @@ function NavigationBar() {
 
         <div className="text-center mx-2 mt-2 d-flex gap-2">
           <img
-            className="text-center d-flex"
+            className="text-center d-none d-sm-flex"
             src="/prievychat_logo.png"
             style={{ width: 40, height: 40 }}
           ></img>
-          <h3>Prievy-Chat</h3>
+          <h3 className="mt-1">Prievy-Chat</h3>
         </div>
 
         <div className="d-flex align-items-center justify-content-end mx-2 position-relative">

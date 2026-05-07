@@ -4,7 +4,8 @@ import { ExpressError } from '../utils/ExpressError.js';
 import Config from '../config/index.js';
 
 const verifyToken = async (req, res, next) => {
-  const token = req.cookies?.token;
+  const authHeader = req.headers.authorization;
+  const token = authHeader && authHeader.split(' ')[1];
   if (!token) {
     return next(new ExpressError(StatusCodes.UNAUTHORIZED, 'No token provided'));
   }

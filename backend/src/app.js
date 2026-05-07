@@ -1,7 +1,6 @@
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
-import cookieParser from 'cookie-parser';
 import { StatusCodes } from 'http-status-codes';
 import { ExpressError } from './utils/ExpressError.js';
 import { mainRouter } from './routes/mainRoutes.js';
@@ -23,12 +22,10 @@ app.use(
 app.use(
   cors({
     origin: Config.frontendUrl,
-    credentials: true,
   })
 );
 
 // middleware to parse JSON request bodies
-app.use(cookieParser());
 app.use(express.json({ limit: '100kb' }));
 
 // routes

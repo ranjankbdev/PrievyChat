@@ -6,13 +6,6 @@ import { hashValue, genToken, compareHash } from '../utils/authHelper.js';
 import { sendOtpEmail } from '../utils/emailService.js';
 import Config from '../config/index.js';
 
-const cookieOptions = {
-  httpOnly: true,
-  maxAge: 3 * 24 * 60 * 60 * 1000,
-  secure: Config.nodeEnv === 'production',
-  sameSite: Config.nodeEnv === 'production' ? 'none' : 'lax',
-};
-
 // signup
 const signup = async (req, res) => {
   const { name, email, password, picture } = req.body;
@@ -36,8 +29,8 @@ const signup = async (req, res) => {
   const savedUser = await newUser.save();
   const token = genToken(savedUser._id);
 
-  res.cookie('token', token, cookieOptions);
   res.status(StatusCodes.CREATED).json({
+    token,
     _id: savedUser._id,
     name: savedUser.name,
     email: savedUser.email,
@@ -62,24 +55,10 @@ const login = async (req, res) => {
   }
 
   const token = genToken(user._id);
-  res.cookie('token', token, cookieOptions);
 
-  res.status(StatusCodes.OK).json({
-    _id: user._id,
-    name: user.name,
-    email: user.email,
-    picture: user.picture,
-  });
-};
-
-// logout
-const logout = async (req, res) => {
-  res.clearCookie('token', {
-    httpOnly: true,
-    secure: Config.nodeEnv === 'production',
-    sameSite: Config.nodeEnv === 'production' ? 'none' : 'lax',
-  });
-  return res.status(StatusCodes.OK).json();
+  res
+    .status(StatusCodes.OK)
+    .json({ token, _id: user._id, name: user.name, email: user.email, picture: user.picture });
 };
 
 // otp for reset password
@@ -160,4 +139,4 @@ const resetUserPassword = async (req, res) => {
   return res.status(StatusCodes.OK).json();
 };
 
-export { signup, login, logout, sendPasswordResetOtp, verifyPasswordResetOtp, resetUserPassword };
+export { signup, login, sendPasswordResetOtp, verifyPasswordResetOtp, resetUserPassword };

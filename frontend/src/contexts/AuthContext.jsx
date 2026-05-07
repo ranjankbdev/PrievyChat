@@ -1,7 +1,6 @@
 import { createContext, useState, useEffect, useContext, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FadeLoader } from 'react-spinners';
-import { logoutUser } from '../services/authService.js';
 import axiosInstance from '../config/axiosInstance.js';
 import showToast from '../utils/toastHelper.js';
 
@@ -44,7 +43,9 @@ export const AuthProvider = ({ children }) => {
 
   // store token and fetch user immediately
   const authenticateUser = useCallback((userData) => {
-    setCurrentUser(userData);
+    const { token, ...user } = userData;
+    localStorage.setItem('token', token);
+    setCurrentUser(user);
   }, []);
 
   // update user profile locally without refetching
@@ -54,7 +55,7 @@ export const AuthProvider = ({ children }) => {
 
   const handleLogout = useCallback(async () => {
     try {
-      await logoutUser();
+      localStorage.removeItem('token');
       setCurrentUser(null);
       showToast('User logged out successfully!', 'success');
       navigate('/');

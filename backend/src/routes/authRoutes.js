@@ -4,7 +4,6 @@ import { wrapAsync } from '../utils/wrapAsync.js';
 import {
   signup,
   login,
-  logout,
   sendPasswordResetOtp,
   verifyPasswordResetOtp,
   resetUserPassword,
@@ -30,8 +29,6 @@ const authRouter = express.Router();
 authRouter.post('/signup', authLimiter, validateSchema(signupSchema), wrapAsync(signup));
 
 authRouter.post('/login', authLimiter, validateSchema(loginSchema), wrapAsync(login));
-
-authRouter.post('/logout', wrapAsync(logout));
 
 authRouter.post(
   '/password-reset/otp',

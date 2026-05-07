@@ -5,9 +5,13 @@ const SOCKET_URL = BASE_URL;
 
 // Fetch Cloudinary config from backend
 const getCloudinarySignature = async () => {
+  const token = localStorage.getItem('token');
+
   const response = await fetch(`${API_URL}/cloudinary/signature`, {
     method: 'POST',
-    credentials: 'include',
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
   });
 
   if (!response.ok) {

@@ -9,9 +9,13 @@ const AuthPage = () => {
   return (
     <div className="min-vh-100 d-flex flex-column justify-content-center align-items-center mx-2">
       <div className="auth-tab rounded shadow-lg">
-        <div className='d-flex gap-4'>
-          <img className="ms-4" src="/prievychat_logo.png" style={{ width: 40, height: 40 }}></img>
-          <h2 className="small-screen text-white text-center mb-4">Welcome to Prievy-Chat</h2>
+        <div className="d-flex align-items-center justify-content-center gap-2 mb-4">
+          <img src="/prievychat_logo.png" style={{ width: 40, height: 40 }} alt="PrievyChat Logo" />
+
+          <h2 className="text-white mb-0 text-start fs-3 fs-md-2">
+            Welcome to <br className="d-sm-none" />
+            Prievy-Chat
+          </h2>
         </div>
         <ul
           className="nav mb-3 rounded-pill d-flex justify-content-center align-items-center gap-2 w-100"
