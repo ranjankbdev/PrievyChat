@@ -36,15 +36,19 @@ const useImagePicker = (setPicture, setPreview) => {
   }, [revokePreviousBlob]);
 
   const handleImageSelection = useCallback(
-    (file) => {
+    async (file) => {
       if (!file || !validateFile(file)) return;
 
       revokePreviousBlob();
 
-      const blobUrl = URL.createObjectURL(file);
+      // read file into memory immediately to avoid ERR_UPLOAD_FILE_CHANGED on mobile
+      const arrayBuffer = await file.arrayBuffer();
+      const stableFile = new File([arrayBuffer], file.name, { type: file.type });
+
+      const blobUrl = URL.createObjectURL(stableFile);
       previousBlobRef.current = blobUrl;
 
-      setPicture(file);
+      setPicture(stableFile);
       setPreview(blobUrl);
     },
     [setPicture, setPreview, revokePreviousBlob]
