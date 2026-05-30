@@ -62,6 +62,8 @@ function ProfileSetup() {
       } else {
         data = signupDataRef.current;
       }
+
+      localStorage.setItem('token', data.token);
       let uploadedImageUrl = '';
       // upload image ONLY if file selected
       if (picture instanceof File) {

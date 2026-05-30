@@ -59,7 +59,7 @@ const AuthPage = () => {
             role="tabpanel"
             aria-labelledby="login-tab"
           >
-            <Login switchTab={setActiveTab} />
+            <Login />
           </div>
           <div
             id="signup-panel"
@@ -67,7 +67,7 @@ const AuthPage = () => {
             role="tabpanel"
             aria-labelledby="signup-tab"
           >
-            <Signup switchTab={setActiveTab} />
+            <Signup />
           </div>
         </div>
       </div>
